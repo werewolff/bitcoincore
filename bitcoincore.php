@@ -15,7 +15,9 @@ define('BTCPLG_TBL_CATEGORIES', 'btccore_categories');
 define('BTCPLG_TBL_VERSIONS', 'btccore_versions');
 define('BTCPLG_TBL_METHODS', 'btccore_methods');
 define('BTCPLG_TBL_METHODS_VERSIONS', 'btccore_methods_versions');
-
+//
+define('BTCPLG_META_TITLE', '_aioseop_title');
+define('BTCPLG_META_DESC', '_aioseop_description');
 
 require_once(BTCPLUGIN__DIR . 'class.bitcoincore.php');
 

@@ -108,8 +108,8 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
                             'post_type' => 'page',
                             'post_parent' => $parent_id,
                             'meta_input' => array(
-                                '_aioseop_title' => $meta_title,
-                                '_aioseop_description' => $meta_desc
+                                BTCPLG_META_TITLE => $meta_title,
+                                BTCPLG_META_DESC => $meta_desc
                             )
                         ));
                         // Записываем данные в БД
@@ -150,11 +150,53 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         global $wpdb;
         $tbl_name = self::$current_table;
         $prefix = $wpdb->prefix;
+        print_r($_POST);
         if (isset($_POST['id']) && isset($_POST['name']) && !empty($_POST['id']) && !empty($_POST['name'])) {
             $id = $_POST['id'];
             $name = $_POST['name'];
             if ($tbl_name == BTCPLG_TBL_METHODS) {
+                $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
+                $versions = self::get_data(BTCPLG_TBL_VERSIONS);
+                foreach ($versions AS $version) {
+                    if (isset($_POST['versions']) && $_POST['versions'][$version->id] == true) {
+                        $version_desc = $_POST['versions_desc'][$version->id];
+                        $category_id = $_POST['category_id'];
+                        $parent_id = $version->page_id;
+                        $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE method_id = $id AND version_id = $version->id AND category_id = $category_id");
 
+                        /*//Генерируем мета-данные или используем кастомные
+                        if (empty($_POST['meta_title'][$version->id]) && empty($_POST['meta_description'][$version->id])) {
+                            $meta_title = $method_name . ' ' . $version->name;
+                            $meta_desc = substr($version_desc, 0, 160);
+                        } elseif (empty($_POST['meta_title'][$version->id])) {
+                            $meta_title = $method_name . ' ' . $version->name;
+                            $meta_desc = $_POST['meta_description'][$version->id];
+                        } elseif (empty($_POST['meta_description'][$version->id])) {
+                            $meta_title = $_POST['meta_title'][$version->id];
+                            $meta_desc = substr($version_desc, 0, 160);
+                        } else {
+                            $meta_title = $_POST['meta_title'][$version->id];
+                            $meta_desc = $_POST['meta_description'][$version->id];
+                        }
+                        */
+                        //Обновляем страницу
+                        wp_update_post(array(
+                            'ID' => $page_id[0]->page_id,
+                            'post_author' => get_current_user_id(),
+                            'post_content' => $version_desc,
+                            'post_name' => $name,
+                            'post_title' => $name,
+                            'post_parent' => $parent_id,
+                        ));
+                        // Обновляем данные в БД
+                        $wpdb->update($prefix . BTCPLG_TBL_METHODS_VERSIONS, array(
+                            'method_id' => $id,
+                            'version_id' => $version->id,
+                            'category_id' => $category_id,
+                            'page_id' => $page_id
+                        ),array(), array('%d', '%d', '%d', '%d'));
+                    }
+                }
             } else {
                 if ($tbl_name == BTCPLG_TBL_VERSIONS) {
                     $page_id = $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . $tbl_name . " WHERE id = {$id}");
