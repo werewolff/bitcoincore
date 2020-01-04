@@ -1,0 +1,193 @@
+table {
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    border-spacing: 0;
+    width: 100%;
+    clear: both;
+    margin: 0;
+    background: #fff;
+    border-collapse: collapse;
+}
+
+thead th, thead td {
+    vertical-align: middle;
+    border-bottom: 1px solid #ccd0d4;
+    text-align: left;
+    padding: 8px;
+}
+
+table td, table th {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+tfoot tr {
+    text-align: left;
+}
+
+form {
+    display: inline-block;
+}
+
+.row-actions {
+    color: #ddd;
+    font-size: 13px;
+    padding: 2px 0 0;
+    position: relative;
+    left: -9999em;
+}
+
+tr:hover .row-actions {
+    position: static;
+}
+
+.version-support {
+    background-color: #aeffb4;
+}
+
+.version-not-support {
+    background-color: #ffe1e1;
+}
+
+/* ------ADD------- */
+
+.show-form {
+    padding: 1em 0;
+}
+
+.form-add {
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    margin-bottom: 1em;
+    background-color: #f9f9f9;
+}
+
+.form-add form {
+    width: 100%;
+}
+
+.form-add span {
+    padding: 10px;
+    font-style: italic;
+}
+
+.form-add_col-1 label {
+    text-align: end;
+}
+
+.form-add_col-1 label > span, .custom-meta label > span {
+    float: left;
+    line-height: 0.7em;
+}
+
+.form-add_col-1 {
+    vertical-align: top;
+    display: inline-block;
+}
+
+.form-add_col-1 > span {
+    margin: 0;
+    padding: .2em .5em 0;
+    line-height: 2.5;
+    font-weight: 600;
+}
+
+.form-add_col-1 label, .form-add_col-1 select {
+    margin: 10px;
+    display: block;
+}
+
+.form-add_col-2 {
+    padding: 10px 0 0 10px;
+    display: inline-block;
+}
+
+.form-add_col-2 label {
+    text-align: end;
+    padding: 10px 0;
+}
+
+.form-add_col-2 textarea {
+    vertical-align: middle;
+    resize: both;
+}
+
+.submit-add {
+    margin-bottom: 30px;
+    padding: 10px;
+    text-align: center;
+}
+
+.version_checkbox {
+    margin: 1em 0 !important;
+}
+
+.version_checkbox:not(:checked) ~ .version_desc {
+    display: none;
+}
+
+.version_checkbox:checked ~ .version_desc {
+    display: inherit;
+}
+
+.version_desc > textarea {
+    display: block;
+    padding: 1em;
+    height: 10em;
+    width: 30em;
+    margin-bottom: 1em;
+}
+
+.version_desc p {
+    margin-left: 1em;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.custom-meta-checkbox {
+    margin-left: 1em !important;
+}
+
+.custom-meta-checkbox:not(:checked) ~ .custom-meta {
+    display: none;
+}
+
+.custom-meta-checkbox:checked ~ .custom-meta {
+    display: inherit;
+}
+
+.custom-meta > * {
+    display: block;
+}
+
+.btn-show-add:after {
+    content: '\271A';
+}
+
+.btn-active:after{
+    content: '\2716';
+}
+
+/* ------DELETE------ */
+
+.submit-delete {
+    background: transparent;
+    border: none;
+    text-decoration: underline;
+    color: #0073aa;
+    padding: 0;
+}
+
+.submit-delete:hover {
+    cursor: pointer;
+    color: #00a0d2;
+}
+
+.submit-delete:focus {
+    color: #124964;
+    box-shadow: 0 0 0 1px #5b9dd9, 0 0 2px 1px rgba(30, 140, 190, .8);
+    outline: 1px solid transparent;
+}
+
