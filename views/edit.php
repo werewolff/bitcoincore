@@ -1,10 +1,11 @@
 <? if ($tbl_name == BTCPLG_TBL_METHODS) { ?>
     <!--Форма изменения метода-->
     <form method="post">
-        <div class="form-add_col-1">
-            <span>Добавить метод</span>
+        <div class="form-edit_col-1">
+            <span>Изменить метод</span>
             <label>
                 <span>Название</span>
+                <input hidden name="id" value="<? echo $row->id ?>"/>
                 <input hidden name="prev_versions" value="<? echo $row->version_id ?>"/>
                 <input hidden name="prev_name" value="<? echo $row->name ?>"/>
                 <input name="name" value="<? echo $row->name ?>" required/>
@@ -18,7 +19,7 @@
                 <? } ?>
             </select>
         </div>
-        <div class="form-add_col-2">
+        <div class="form-edit_col-2">
             <span>Версии</span>
             <? foreach ($versions as $version) {
                 $checked = false;
@@ -42,36 +43,20 @@
                         <span><? echo $version->name ?></span>
                     </label>
                     <div class="version_desc">
-                        <input hidden name="prev_version_desc[<? echo $version->id ?>]"
+                        <input hidden name="prev_versions_desc[<? echo $version->id ?>]"
                                value="<? echo $version_desc ?>"/>
-                        <textarea name="versions_desc[<? echo $version->id ?>]"><? echo $version_desc ?></textarea>
-                        <input class="custom-meta-checkbox" type="checkbox" name="custom-meta-checkbox[<? echo $version->id ?>]" value="true"/>
-                        <label>
-                            <span>Кастомные мета-данные</span>
-                            <p>По умолчанию, мета-данные, будут сформированы автоматически из названия метода,
-                                версии и описания</p>
-                        </label>
-                        <div class="custom-meta">
-                            <label>
-                                <span>Title</span>
-                                <input type="text" name="meta_title[<? echo $version->id ?>]"
-                                       value="<? echo get_post_meta($current_page_id, BTCPLG_META_TITLE, true) ?>"/>
-                            </label>
-                            <label>
-                                <span>Description</span>
-                                <textarea cols="50" rows="3"
-                                          name="meta_description[<? echo $version->id ?>]"><? echo get_post_meta($current_page_id, BTCPLG_META_DESC, true) ?></textarea>
-                            </label>
-                        </div>
+                        <textarea rows="5"
+                                  name="versions_desc[<? echo $version->id ?>]"><? echo $version_desc ?></textarea>
                     </div>
                 </div>
             <? } ?>
         </div>
-        <div class="submit-add">
+        <div class="submit-edit">
             <button
                     type="button"
-                    class="button cancel alignleft btn-hide-add"
-                    target="form-add<? echo ($tbl_name == BTCPLG_TBL_METHODS) ? '-' . $category->id : '' ?>">
+                    class="button cancel alignleft btn-hide-edit"
+                    target="edit-bar-<? echo $row->category_id . '-';
+                    echo $row->id; ?>">
                 Отмена
             </button>
             <input class="button button-primary alignright" type="submit" name="action" value="Изменить"/>
@@ -82,6 +67,7 @@
     <!--Форма изменения таблиц категории и версии-->
     <form method="post">
         <input hidden name="id" value="<? echo $row->id; ?>"/>
+        <input hidden name="prev_name" value="<? echo $row->name; ?>"/>
         <input name="name" value="<? echo $row->name; ?>"/>
         <input class="" type="submit" name="action" value="Изменить"/>
     </form>

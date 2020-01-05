@@ -34,8 +34,8 @@
                                 ?>
                                 <td class="version-support">
                                     <strong>
-                                        <a href="<? echo get_page_link($pages_id[$version_key]) ?>">
-                                            <? echo !empty($version_desc) ? $version_desc : 'Отсутствует описание' ?>
+                                        <a href="<? echo get_page_link($pages_id[$version_key]) ?>" title="<? echo !empty($version_desc) ? $version_desc : 'Отсутствует описание' ?>">
+                                            <? echo !empty($version_desc) ? substr($version_desc, 0, 160) : 'Отсутствует описание' ?>
                                         </a>
                                     </strong>
                                 </td>

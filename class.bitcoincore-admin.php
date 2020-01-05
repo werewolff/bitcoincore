@@ -25,6 +25,16 @@ class Bitcoincore_Admin
         wp_enqueue_script('bitcoincore', plugins_url('/assets/bitcoincore-plg-admin.js', __FILE__), array('jquery'));
     }
 
+    public static function generate_meta($title, $desctiption)
+    {
+        $meta_title = $title;
+        $meta_desc = substr($desctiption, 0, 160);
+        return array(
+            BTCPLG_META_TITLE => $meta_title,
+            BTCPLG_META_DESC => $meta_desc
+        );
+    }
+
     public static function get_data($tblname)
     {
         global $wpdb;
@@ -81,21 +91,6 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
                         $version_desc = $_POST['versions_desc'][$version->id];
                         $category_id = $_POST['category_id'];
                         $parent_id = $version->page_id;
-                        //Генерируем мета-данные или используем кастомные
-                        if (empty($_POST['meta_title'][$version->id]) && empty($_POST['meta_description'][$version->id])) {
-                            $meta_title = $method_name . ' ' . $version->name;
-                            $meta_desc = substr($version_desc, 0, 160);
-                        } elseif (empty($_POST['meta_title'][$version->id])) {
-                            $meta_title = $method_name . ' ' . $version->name;
-                            $meta_desc = $_POST['meta_description'][$version->id];
-                        } elseif (empty($_POST['meta_description'][$version->id])) {
-                            $meta_title = $_POST['meta_title'][$version->id];
-                            $meta_desc = substr($version_desc, 0, 160);
-                        } else {
-                            $meta_title = $_POST['meta_title'][$version->id];
-                            $meta_desc = $_POST['meta_description'][$version->id];
-                        }
-
                         //создаем страницу
                         $page_id = wp_insert_post(array(
                             'comment_status' => 'closed',
@@ -107,10 +102,7 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
                             'post_title' => $method_name,
                             'post_type' => 'page',
                             'post_parent' => $parent_id,
-                            'meta_input' => array(
-                                BTCPLG_META_TITLE => $meta_title,
-                                BTCPLG_META_DESC => $meta_desc
-                            )
+                            'meta_input' => self::generate_meta($method_name . ' ' . $version->name, $version_desc)
                         ));
                         // Записываем данные в БД
                         $wpdb->insert($prefix . BTCPLG_TBL_METHODS_VERSIONS, array(
@@ -124,7 +116,7 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
             }
         } else {
             if (isset($_POST['name']) && !empty($_POST['name'])) {
-                $post_name = $_POST['name'];
+                $name = $_POST['name'];
                 // Для версий
                 if ($tbl_name == BTCPLG_TBL_VERSIONS) {
                     //создаем страницу
@@ -133,14 +125,14 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
                         'ping_status' => 'closed',
                         'post_author' => get_current_user_id(),
                         'post_content' => '',
-                        'post_name' => $post_name,
+                        'post_name' => $name,
                         'post_status' => 'publish',
-                        'post_title' => $post_name,
+                        'post_title' => $name,
                         'post_type' => 'page',
                     ));
-                    $wpdb->insert($prefix . $tbl_name, array('name' => $post_name, 'page_id' => $page_id));
+                    $wpdb->insert($prefix . $tbl_name, array('name' => $name, 'page_id' => $page_id));
                 } else // Для категорий
-                    $wpdb->insert($prefix . $tbl_name, array('name' => $post_name));
+                    $wpdb->insert($prefix . $tbl_name, array('name' => $name));
             }
         }
     }
@@ -148,67 +140,128 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
     public static function action_edit()
     {
         global $wpdb;
-        $tbl_name = self::$current_table;
-        $prefix = $wpdb->prefix;
-        print_r($_POST);
+        $tbl_name = self::$current_table; // Текущая таблица
+        $prefix = $wpdb->prefix; // Префикс для таблиц
         if (isset($_POST['id']) && isset($_POST['name']) && !empty($_POST['id']) && !empty($_POST['name'])) {
-            $id = $_POST['id'];
-            $name = $_POST['name'];
-            if ($tbl_name == BTCPLG_TBL_METHODS) {
-                $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
+            $id = $_POST['id']; // ID метода
+            $name = $_POST['name']; // имя метода
+            $prev_name = $_POST['prev_name']; // Предудущее имя
+            if ($tbl_name == BTCPLG_TBL_METHODS) { // Таблица методов
+                $prev_category_id = $_POST['prev_category_id']; // Предыдущая категория
+                $category_id = $_POST['category_id']; // Текущаяя категория
+                $prev_versions = explode(';', $_POST['prev_versions']); // Предыдушие версии
+
+                if ($prev_name !== $name) // Если изменилось имя записываем в базу
+                    $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
                 $versions = self::get_data(BTCPLG_TBL_VERSIONS);
                 foreach ($versions AS $version) {
-                    if (isset($_POST['versions']) && $_POST['versions'][$version->id] == true) {
+                    if ($_POST['versions'][$version->id] == true && in_array($version->id, $prev_versions)) { // Если версия активирована и она существовала в предыдущей
+                        $prev_version_desc = $_POST['prev_versions_desc'][$version->id];
                         $version_desc = $_POST['versions_desc'][$version->id];
-                        $category_id = $_POST['category_id'];
-                        $parent_id = $version->page_id;
-                        $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE method_id = $id AND version_id = $version->id AND category_id = $category_id");
-
-                        /*//Генерируем мета-данные или используем кастомные
-                        if (empty($_POST['meta_title'][$version->id]) && empty($_POST['meta_description'][$version->id])) {
-                            $meta_title = $method_name . ' ' . $version->name;
-                            $meta_desc = substr($version_desc, 0, 160);
-                        } elseif (empty($_POST['meta_title'][$version->id])) {
-                            $meta_title = $method_name . ' ' . $version->name;
-                            $meta_desc = $_POST['meta_description'][$version->id];
-                        } elseif (empty($_POST['meta_description'][$version->id])) {
-                            $meta_title = $_POST['meta_title'][$version->id];
-                            $meta_desc = substr($version_desc, 0, 160);
-                        } else {
-                            $meta_title = $_POST['meta_title'][$version->id];
-                            $meta_desc = $_POST['meta_description'][$version->id];
+                        $page_id = $wpdb->get_results(
+                            "SELECT page_id FROM "
+                            . $prefix . BTCPLG_TBL_METHODS_VERSIONS .
+                            " WHERE method_id = $id AND 
+                                version_id = $version->id AND 
+                                category_id = $prev_category_id");
+                        if ($prev_version_desc !== $version_desc) { // Если описание метода изменилось
+                            //Обновляем страницу
+                            wp_update_post(array(
+                                'ID' => $page_id[0]->page_id,
+                                'post_author' => get_current_user_id(),
+                                'post_content' => $version_desc,
+                                'post_name' => $name,
+                                'post_title' => $name,
+                            ));
+                            $meta = self::generate_meta($name . ' ' . $version->name, $version_desc);
+                            update_post_meta($page_id[0]->page_id, BTCPLG_META_TITLE, $meta[BTCPLG_META_TITLE]);
+                            update_post_meta($page_id[0]->page_id, BTCPLG_META_DESC, $meta[BTCPLG_META_DESC]);
+                        } elseif ($prev_name !== $name) { // Если менялось имя обновляем название страницы
+                            wp_update_post(array(
+                                'ID' => $page_id[0]->page_id,
+                                'post_author' => get_current_user_id(),
+                                'post_name' => $name,
+                                'post_title' => $name,
+                            ));
+                            $meta = self::generate_meta($name . ' ' . $version->name, $version_desc);
+                            update_post_meta($page_id[0]->page_id, BTCPLG_META_TITLE, $meta[BTCPLG_META_TITLE]);
+                            update_post_meta($page_id[0]->page_id, BTCPLG_META_DESC, $meta[BTCPLG_META_DESC]);
                         }
-                        */
-                        //Обновляем страницу
-                        wp_update_post(array(
-                            'ID' => $page_id[0]->page_id,
+                        continue;
+                    } elseif ($_POST['versions'][$version->id] == true && !in_array($version->id, $prev_versions)) { // Если версия активирована и она не существовала раньше
+                        $version_desc = $_POST['versions_desc'][$version->id];
+                        $parent_id = $version->page_id;
+                        //создаем страницу
+                        $page_id = wp_insert_post(array(
+                            'comment_status' => 'closed',
+                            'ping_status' => 'closed',
                             'post_author' => get_current_user_id(),
                             'post_content' => $version_desc,
                             'post_name' => $name,
+                            'post_status' => 'publish',
                             'post_title' => $name,
+                            'post_type' => 'page',
                             'post_parent' => $parent_id,
+                            'meta_input' => self::generate_meta($name . ' ' . $version->name, $version_desc)
                         ));
-                        // Обновляем данные в БД
-                        $wpdb->update($prefix . BTCPLG_TBL_METHODS_VERSIONS, array(
+                        // Записываем данные в БД
+                        $wpdb->insert($prefix . BTCPLG_TBL_METHODS_VERSIONS, array(
                             'method_id' => $id,
                             'version_id' => $version->id,
                             'category_id' => $category_id,
                             'page_id' => $page_id
-                        ),array(), array('%d', '%d', '%d', '%d'));
+                        ), array('%d', '%d', '%d', '%d'));
+                        continue;
+                    } elseif ($_POST['versions'][$version->id] !== true && in_array($version->id, $prev_versions)) { // Деактивация версии
+                        $page_id = $wpdb->get_results(
+                            "SELECT page_id FROM "
+                            . $prefix . BTCPLG_TBL_METHODS_VERSIONS .
+                            " WHERE method_id = $id AND 
+                                version_id = $version->id AND 
+                                category_id = $prev_category_id");
+                        wp_delete_post($page_id[0]->page_id, true);
+                        continue;
                     }
                 }
-            } else {
-                if ($tbl_name == BTCPLG_TBL_VERSIONS) {
-                    $page_id = $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . $tbl_name . " WHERE id = {$id}");
-                    wp_update_post(array(
-                        'ID' => $page_id[0]->page_id,
-                        'post_name' => $name,
-                        'post_title' => $name
-                    ));
-                    $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
+                if ($prev_category_id !== $category_id) { // Изменение категории
+                    $wpdb->update($prefix . BTCPLG_TBL_METHODS_VERSIONS,
+                        array('category_id' => $category_id),
+                        array(
+                            'method_id' => $id,
+                        ),
+                        array(
+                            '%d'
+                        ),
+                        array(
+                            '%d'
+                        ));
                 }
-                $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
+            } else {
+                if ($name != $prev_name) { // Если изменилось название
+                    if ($tbl_name == BTCPLG_TBL_VERSIONS) { // Для версий
+                        $page_id = $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . $tbl_name . " WHERE id = {$id}");
+                        wp_update_post(array(
+                            'ID' => $page_id[0]->page_id,
+                            'post_name' => $name,
+                            'post_title' => $name
+                        ));
 
+                        // изменяем мета у дочерних страниц
+                        $posts = get_posts(array(
+                            'post_parent' => $page_id[0]->page_id,
+                            'numberposts' => -1,
+                            'post_type' => 'page'
+                        ));
+                        foreach ($posts AS $post) {
+                            $meta_title = get_post_meta($post->ID, BTCPLG_META_TITLE, true);
+                            $meta_title = str_replace($prev_name, $name, $meta_title);
+                            update_post_meta($post->ID, BTCPLG_META_TITLE, $meta_title);
+
+                        }
+                        $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
+                    }
+                    $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id)); // Для категорий
+                }
             }
         }
     }

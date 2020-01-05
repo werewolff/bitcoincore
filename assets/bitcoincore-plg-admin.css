@@ -61,6 +61,7 @@ tr:hover .row-actions {
     border: 1px solid #ccd0d4;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
     margin-bottom: 1em;
+    padding: .75rem;
     background-color: #f9f9f9;
 }
 
@@ -79,10 +80,11 @@ tr:hover .row-actions {
 
 .form-add_col-1 label > span, .custom-meta label > span {
     float: left;
-    line-height: 0.7em;
+    line-height: 0.3em;
 }
 
 .form-add_col-1 {
+    width: 25%;
     vertical-align: top;
     display: inline-block;
 }
@@ -100,6 +102,7 @@ tr:hover .row-actions {
 }
 
 .form-add_col-2 {
+    width: 73%;
     padding: 10px 0 0 10px;
     display: inline-block;
 }
@@ -116,7 +119,6 @@ tr:hover .row-actions {
 
 .submit-add {
     margin-bottom: 30px;
-    padding: 10px;
     text-align: center;
 }
 
@@ -133,10 +135,10 @@ tr:hover .row-actions {
 }
 
 .version_desc > textarea {
+    width: 100%;
+    max-width: 100%;
     display: block;
     padding: 1em;
-    height: 10em;
-    width: 30em;
     margin-bottom: 1em;
 }
 
@@ -168,6 +170,67 @@ tr:hover .row-actions {
 
 .btn-active:after{
     content: '\2716';
+}
+
+/* ------EDIT------- */
+
+.edit-bar form {
+    width: 100%;
+}
+
+.edit-bar span {
+    padding: 10px;
+    font-style: italic;
+}
+
+.form-edit_col-1 label {
+    text-align: end;
+}
+
+.form-edit_col-1 label > span, .custom-meta label > span {
+    float: left;
+    line-height: 0.3em;
+}
+
+.form-edit_col-1 {
+    width: 25%;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.form-edit_col-1 > span {
+    margin: 0;
+    padding: .2em .5em 0;
+    line-height: 2.5;
+    font-weight: 600;
+}
+
+.form-edit_col-1 label, .form-edit_col-1 select {
+    margin: 10px;
+    display: block;
+}
+
+.form-edit_col-2 {
+    width: 73%;
+    padding: 10px 0 0 10px;
+    display: inline-block;
+}
+
+.form-edit_col-2 label {
+    text-align: end;
+    padding: 10px 0;
+}
+
+.form-edit_col-2 textarea {
+    width: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+    resize: both;
+}
+
+.submit-edit {
+    margin-bottom: 30px;
+    text-align: center;
 }
 
 /* ------DELETE------ */

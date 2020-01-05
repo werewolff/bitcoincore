@@ -5,6 +5,10 @@ jQuery(document).ready(function ($) {
             var id = $(this).attr('target');
             $('#' + id).toggle(300);
         });
+        $('.btn-hide-edit').bind('click', function () {
+            var target = $(this).attr('target');
+            $('.edit-bar-btn[target= ' + target + ']').trigger('click', $(this).attr('target'));
+        })
     }
 
     function addBarToggle() {

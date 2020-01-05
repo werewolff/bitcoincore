@@ -30,25 +30,8 @@
                             <span><? echo $version->name ?></span>
                         </label>
                         <div class="version_desc">
-                            <textarea name="versions_desc[<? echo $version->id ?>]"
+                            <textarea rows="5" name="versions_desc[<? echo $version->id ?>]"
                                       placeholder="Описание метода <? echo $version->name ?>"></textarea>
-                            <input class="custom-meta-checkbox" type="checkbox"/>
-                            <label>
-                                <span>Кастомные мета-данные</span>
-                                <p>По умолчанию, мета-данные, будут сформированы автоматически из названия метода,
-                                    версии и описания</p>
-                            </label>
-                            <div class="custom-meta">
-                                <label>
-                                    <span>Title</span>
-                                    <input type="text" name="meta_title[<? echo $version->id ?>]"/>
-                                </label>
-                                <label>
-                                    <span>Description</span>
-                                    <textarea cols="50" rows="3"
-                                              name="meta_description[<? echo $version->id ?>]"></textarea>
-                                </label>
-                            </div>
                         </div>
                     </div>
                 <? } ?>
