@@ -5,6 +5,9 @@ class Bitcoincore_Admin
     private static $initiated = false;
     private static $current_table;
 
+    /**
+     * Entry point
+     */
     public static function init()
     {
         if (!self::$initiated) {
@@ -12,6 +15,9 @@ class Bitcoincore_Admin
         }
     }
 
+    /**
+     * Initial hooks
+     */
     public static function init_hooks()
     {
         self::$initiated = true;
@@ -19,12 +25,25 @@ class Bitcoincore_Admin
         add_action('admin_enqueue_scripts', array('Bitcoincore_Admin', 'register_assets'));
     }
 
+    /**
+     * Register assets(css,js)
+     */
     public static function register_assets()
     {
         wp_enqueue_style('bitcoincore', plugins_url('/assets/bitcoincore-plg-admin.css', __FILE__));
         wp_enqueue_script('bitcoincore', plugins_url('/assets/bitcoincore-plg-admin.js', __FILE__), array('jquery'));
     }
 
+    /**
+     * Method generating meta-data and return array {
+     * BTCPLG_META_TITLE => $title,
+     * BTCPLG_META_DESC => $desctiption (maxlenght = 160)
+     * }
+     *
+     * @param $title
+     * @param $desctiption
+     * @return array
+     */
     public static function generate_meta($title, $desctiption)
     {
         $meta_title = $title;
@@ -35,6 +54,12 @@ class Bitcoincore_Admin
         );
     }
 
+    /**
+     * Get all data from table database
+     *
+     * @param $tblname
+     * @return array|null|object
+     */
     public static function get_data($tblname)
     {
         global $wpdb;
@@ -75,6 +100,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         }
     }
 
+    /**
+     * Method execute add action for $_POST data
+     */
     public static function action_add()
     {
         global $wpdb;
@@ -137,6 +165,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         }
     }
 
+    /**
+     * Method execute edit action for $_POST data
+     */
     public static function action_edit()
     {
         global $wpdb;
@@ -266,6 +297,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         }
     }
 
+    /**
+     * Method execute delete action for $_POST data
+     */
     public static function action_delete()
     {
         if (isset($_POST['id']) && !empty($_POST['id'])) {
@@ -301,6 +335,11 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         }
     }
 
+    /**
+     * returns type $_POST[action]
+     *
+     * @return string
+     */
     public static function get_type_action()
     {
         if (isset($_POST['action'])) {
@@ -319,6 +358,12 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         }
     }
 
+    /**
+     *
+     * Executes a method appropriate to the type
+     *
+     * @param $action_type
+     */
     public static function do_action($action_type)
     {
         switch ($action_type) {
@@ -334,6 +379,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         }
     }
 
+    /**
+     * Render page
+     */
     public static function render()
     {
         self::register_assets();
@@ -358,6 +406,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
 
     }
 
+    /**
+     * Render methods
+     */
     public static function render_methods()
     {
         self::$current_table = BTCPLG_TBL_METHODS;
@@ -366,6 +417,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         self::render();
     }
 
+    /**
+     * Render categories
+     */
     public static function render_categories()
     {
         self::$current_table = BTCPLG_TBL_CATEGORIES;
@@ -374,6 +428,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         self::render();
     }
 
+    /**
+     * Render versions
+     */
     public static function render_versions()
     {
         self::$current_table = BTCPLG_TBL_VERSIONS;
@@ -382,6 +439,9 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         self::render();
     }
 
+    /**
+     * Add admin menu
+     */
     public static function admin_menu()
     {
         // Меню админки
@@ -401,6 +461,12 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         );
     }
 
+    /**
+     * Displays the specified file
+     *
+     * @param $name
+     * @param array $args
+     */
     public static function view($name, array $args = array())
     {
         extract($args, EXTR_OVERWRITE);
