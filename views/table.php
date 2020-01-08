@@ -11,7 +11,6 @@
                 </th>
             <? }
         } ?>
-
     </tr>
     </thead>
     <tbody>
@@ -20,32 +19,29 @@
         ?>
         <tr class="">
             <? foreach ($row as $key => $col) {
-                if ($key == 'id' || $key == 'category_id' || $row->category_id != $category->id || $key == 'version_desc' || $key == 'page_id')
+                if($row->category_id != $category->id)
+                    continue 2;
+                if ($key == 'id' || $key == 'category_id' || $key == 'version_desc' || $key == 'page_id')
                     continue;
                 if ($key == 'version_id') {
                     $versions_id = explode(';', $col);
                     $pages_id = explode(';', $row->page_id);
                     foreach ($versions as $version) {
-                        $added_td = false;
                         foreach ($versions_id as $version_key => $version_id) {
                             if ($version->id === $version_id) {
-                                $added_td = true;
                                 $version_desc = get_post_field('post_content', $pages_id[$version_key], 'display');
                                 ?>
                                 <td class="version-support">
                                     <strong>
-                                        <a href="<? echo get_page_link($pages_id[$version_key]) ?>" title="<? echo !empty($version_desc) ? $version_desc : 'Отсутствует описание' ?>">
+                                        <a href="<? echo get_page_link($pages_id[$version_key]) ?>"
+                                           title="<? echo !empty($version_desc) ? esc_html($version_desc) : 'Отсутствует описание' ?>">
                                             <? echo !empty($version_desc) ? substr($version_desc, 0, 160) : 'Отсутствует описание' ?>
                                         </a>
                                     </strong>
                                 </td>
-                                <?
-                            } else {
-
+                                <? continue 2;
                             }
-                        }
-                        if ($added_td)
-                            continue; ?>
+                        } ?>
                         <td class="version-not-support">
                             <strong>Не поддерживается</strong>
                         </td>
@@ -81,8 +77,7 @@
             <? }; ?>
         </tr>
         <? if ($row_was_add) { ?>
-            <tr class="edit-bar" id="edit-bar-<? echo $row->category_id . '-';
-            echo $row->id; ?>">
+            <tr class="edit-bar" id="edit-bar-<? echo $row->category_id . '-' . $row->id; ?>">
                 <td colspan="1000">
                     <? include(BTCPLUGIN__DIR . 'views/edit.php'); ?>
                 </td>

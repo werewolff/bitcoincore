@@ -1,0 +1,17 @@
+{
+  "name": "block-bitcoincore",
+  "version": "1.1.0",
+  "license": "GPL-2.0-or-later",
+  "main": "build/index.js",
+  "devDependencies": {
+    "@wordpress/scripts": "^6.1.1"
+  },
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build",
+    "lint-js": "wp-scripts lint-js"
+  },
+  "dependencies": {
+    "@wordpress/blocks": "^6.9.0",
+  }
+}

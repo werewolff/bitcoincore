@@ -1,6 +1,6 @@
 <?php
 
-class Bitcoincore_Admin
+class Bitcoincore_Admin extends Bitcoincore
 {
     private static $initiated = false;
     private static $current_table;
@@ -8,7 +8,7 @@ class Bitcoincore_Admin
     /**
      * Entry point
      */
-    public static function init()
+    public static function admin_init()
     {
         if (!self::$initiated) {
             self::init_hooks();
@@ -55,52 +55,6 @@ class Bitcoincore_Admin
     }
 
     /**
-     * Get all data from table database
-     *
-     * @param $tblname
-     * @return array|null|object
-     */
-    public static function get_data($tblname)
-    {
-        global $wpdb;
-        if ($tblname == BTCPLG_TBL_METHODS) {
-            $tbl_m = $wpdb->prefix . BTCPLG_TBL_METHODS;
-            $tbl_mv = $wpdb->prefix . BTCPLG_TBL_METHODS_VERSIONS;
-            $tbl_v = $wpdb->prefix . BTCPLG_TBL_VERSIONS;
-            $tbl_c = $wpdb->prefix . BTCPLG_TBL_CATEGORIES;
-            $sql = "SELECT
-    {$tbl_m}.id,
-    {$tbl_m}.name,
-    {$tbl_c}.id AS category_id,
-    GROUP_CONCAT(
-        DISTINCT {$tbl_mv}.page_id
-    ORDER BY
-        {$tbl_v}.id
-    ASC SEPARATOR
-        ';'
-    ) AS page_id,
-    GROUP_CONCAT(
-        DISTINCT {$tbl_v}.id
-    ORDER BY
-        {$tbl_v}.id
-    ASC SEPARATOR
-        ';'
-    ) AS version_id
-FROM
-    {$tbl_mv}
-LEFT JOIN {$tbl_v} ON {$tbl_mv}.version_id = {$tbl_v}.id
-LEFT JOIN {$tbl_m} ON {$tbl_mv}.method_id = {$tbl_m}.id
-LEFT JOIN {$tbl_c} ON {$tbl_mv}.category_id = {$tbl_c}.id
-GROUP BY {$tbl_c}.name, {$tbl_m}.name
-ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
-            return $wpdb->get_results($sql);
-        } else {
-            $tblname = $wpdb->prefix . $tblname;
-            return $wpdb->get_results("SELECT * FROM $tblname ORDER BY name ASC");
-        }
-    }
-
-    /**
      * Method execute add action for $_POST data
      */
     public static function action_add()
@@ -113,7 +67,7 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
                 $method_name = $_POST['name'];
                 $wpdb->insert($prefix . $tbl_name, array('name' => $method_name)); //Создаем сам метод
                 $method_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM " . $prefix . BTCPLG_TBL_METHODS . " WHERE name = %s", $method_name));
-                $versions = self::get_data(BTCPLG_TBL_VERSIONS);
+                $versions = parent::get_data(BTCPLG_TBL_VERSIONS);
                 foreach ($versions as $version) {
                     if (isset($_POST['versions']) && $_POST['versions'][$version->id] == true) {
                         $version_desc = $_POST['versions_desc'][$version->id];
@@ -152,13 +106,17 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
                         'comment_status' => 'closed',
                         'ping_status' => 'closed',
                         'post_author' => get_current_user_id(),
-                        'post_content' => '',
                         'post_name' => $name,
                         'post_status' => 'publish',
                         'post_title' => $name,
                         'post_type' => 'page',
                     ));
                     $wpdb->insert($prefix . $tbl_name, array('name' => $name, 'page_id' => $page_id));
+                    $version_id = $wpdb->get_results("SELECT id FROM {$prefix}{$tbl_name} WHERE page_id = {$page_id}");
+                    wp_update_post(array(
+                        'ID' => $page_id,
+                        'post_content' => '<!-- wp:shortcode -->['.BTCPLG_SHORTCODE_VERSION.' id="'.$version_id[0]->id.'"]<!-- /wp:shortcode -->',
+                    ));
                 } else // Для категорий
                     $wpdb->insert($prefix . $tbl_name, array('name' => $name));
             }
@@ -184,7 +142,7 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
 
                 if ($prev_name !== $name) // Если изменилось имя записываем в базу
                     $wpdb->update($prefix . $tbl_name, array('name' => $name), array('id' => $id));
-                $versions = self::get_data(BTCPLG_TBL_VERSIONS);
+                $versions = parent::get_data(BTCPLG_TBL_VERSIONS);
                 foreach ($versions AS $version) {
                     if ($_POST['versions'][$version->id] == true && in_array($version->id, $prev_versions)) { // Если версия активирована и она существовала в предыдущей
                         $prev_version_desc = $_POST['prev_versions_desc'][$version->id];
@@ -386,22 +344,22 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
     {
         self::register_assets();
         $tbl_name = self::$current_table;
-        $data = self::get_data($tbl_name);
+        $data = parent::get_data($tbl_name);
         if ($tbl_name == BTCPLG_TBL_METHODS) {
-            $categories = self::get_data(BTCPLG_TBL_CATEGORIES);
-            $versions = self::get_data(BTCPLG_TBL_VERSIONS);
-            self::view('header');
+            $categories = parent::get_data(BTCPLG_TBL_CATEGORIES);
+            $versions = parent::get_data(BTCPLG_TBL_VERSIONS);
+            parent::view('header');
             foreach ($categories AS $category) {
                 $view_args = compact('tbl_name', 'data', 'categories', 'versions', 'category');
                 echo '<h3>' . $category->name . '</h3>';
-                self::view('table', $view_args);
-                self::view('add', $view_args);
+                parent::view('table', $view_args);
+                parent::view('add', $view_args);
             }
         } else {
             $view_args = compact('tbl_name', 'data');
-            self::view('header');
-            self::view('table', $view_args);
-            self::view('add', $view_args);
+            parent::view('header');
+            parent::view('table', $view_args);
+            parent::view('add', $view_args);
         }
 
     }
@@ -461,16 +419,4 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
         );
     }
 
-    /**
-     * Displays the specified file
-     *
-     * @param $name
-     * @param array $args
-     */
-    public static function view($name, array $args = array())
-    {
-        extract($args, EXTR_OVERWRITE);
-        $file = BTCPLUGIN__DIR . 'views/' . $name . '.php';
-        include($file);
-    }
 }

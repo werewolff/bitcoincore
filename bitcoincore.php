@@ -18,15 +18,25 @@ define('BTCPLG_TBL_METHODS_VERSIONS', 'btccore_methods_versions');
 //
 define('BTCPLG_META_TITLE', '_aioseop_title');
 define('BTCPLG_META_DESC', '_aioseop_description');
-
+//
+define('BTCPLG_SHORTCODE_VERSION', 'bitcoin_version');
 require_once(BTCPLUGIN__DIR . 'class.bitcoincore.php');
 
 add_action('init', array('Bitcoincore', 'init'));
-
 if (is_admin()) {
     require_once(BTCPLUGIN__DIR . 'class.bitcoincore-admin.php');
-    add_action('init', array('Bitcoincore_Admin', 'init'));
+    add_action('init', array('Bitcoincore_Admin', 'admin_init'));
 }
 
 // активация
 register_activation_hook(__FILE__, array('Bitcoincore', 'plugin_activation'));
+
+//shortcodes
+add_shortcode(BTCPLG_SHORTCODE_VERSION, array('Bitcoincore', 'shortcode_version'));
+
+//widgets
+require_once (BTCPLUGIN__DIR . 'class.bitcoincore-widget.php');
+add_action('widgets_init', array('Bitcoincore_Main_Widget', 'register_widget'));
+
+//blocks
+require_once (BTCPLUGIN__DIR . 'block-bitcoincore/index.php');
