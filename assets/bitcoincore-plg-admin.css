@@ -168,7 +168,7 @@ tr:hover .row-actions {
     content: '\271A';
 }
 
-.btn-active:after{
+.btn-active:after {
     content: '\2716';
 }
 
@@ -254,3 +254,20 @@ tr:hover .row-actions {
     outline: 1px solid transparent;
 }
 
+/* ------IMPORT------ */
+
+.import-form {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    background: #fff;
+
+}
+
+.import-form > form > * {
+    display: block;
+    margin: 1em !important;
+}
+
+.import-form > form > div label {
+    margin-left: 1em;
+    line-height: 2.3em;
+}

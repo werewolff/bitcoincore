@@ -34,7 +34,7 @@
                                 <td class="version-support">
                                     <strong>
                                         <a href="<? echo get_page_link($pages_id[$version_key]) ?>"
-                                           title="<? echo !empty($version_desc) ? esc_html($version_desc) : 'Отсутствует описание' ?>">
+                                           title="<? echo !empty($version_desc) ? wp_filter_nohtml_kses($version_desc) : 'Отсутствует описание' ?>">
                                             <? echo !empty($version_desc) ? substr($version_desc, 0, 160) : 'Отсутствует описание' ?>
                                         </a>
                                     </strong>

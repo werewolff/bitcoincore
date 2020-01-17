@@ -44,7 +44,7 @@
                     </label>
                     <div class="version_desc">
                         <input hidden name="prev_versions_desc[<? echo $version->id ?>]"
-                               value="<? echo $version_desc ?>"/>
+                               value="<? echo htmlspecialchars($version_desc) ?>"/>
                         <textarea rows="5"
                                   name="versions_desc[<? echo $version->id ?>]"><? echo $version_desc ?></textarea>
                     </div>
