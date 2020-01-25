@@ -1,0 +1,25 @@
+#filter-versions{
+    position: absolute;
+    border: 1px solid #dee2e6!important;
+    padding: 1em;
+    background-color: white;
+    z-index: 999;
+}
+
+#filter-versions label{
+    display: block;
+    padding-right: 1em;
+}
+
+#filter-versions label input{
+    margin: 0 1em;
+}
+
+#filter-versions button{
+    display: block;
+    margin: auto;
+    border-radius: 0.65rem;
+    color: #fff;
+    background-color: #f79019;
+    border-color: #f79019;
+}

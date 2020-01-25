@@ -18,7 +18,8 @@ class Bitcoincore
         add_action('wp_enqueue_scripts', array('Bitcoincore', 'register_assets'));
     }
 
-    public static function register_assets(){
+    public static function register_assets()
+    {
         wp_register_script(
             'bitcoincore-js',
             plugins_url('/assets/bitcoincore-plg.js', __FILE__),
@@ -60,15 +61,21 @@ class Bitcoincore
              LEFT JOIN {$tbl_m} ON {$tbl_mv}.method_id = {$tbl_m}.id
              WHERE version_id = {$atts['id']}
              ");
-        $content = '<div class="table-responsive"><table class="table table-sm table-bordered">';
+        $methods_column_category_id = array_column($methods, 'category_id');
+        $content = '<div class="versions">';
         foreach ($categories AS $category) {
-            $content .= '<tr><th colspan="1000">' . $category->name . '</th></tr>';
+            if (!in_array($category->id, $methods_column_category_id))
+                continue;
+            $content .= '<h3>' . $category->name . '</h3>';
             foreach ($methods AS $method) {
-                if ($category->id == $method->category_id)
-                    $content .= '<tr><td><a href="' . get_page_link($method->page_id) . '">' . $method->name . '</a></td></tr>';
+                if ($category->id == $method->category_id) {
+                    $version_desc = apply_filters('the_content', get_post_field('post_content', $method->page_id, 'display'));
+                    $content .= '<dt><a href="' . get_page_link($method->page_id) . '">' . $method->name . '</a></dt>';
+                    $content .= '<dd class="text-break">' . $version_desc . '</dd>';
+                }
             }
         }
-        $content .= '</table></div>';
+        $content .= '</div>';
         return $content;
     }
 

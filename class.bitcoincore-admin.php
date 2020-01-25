@@ -55,15 +55,17 @@ class Bitcoincore_Admin extends Bitcoincore
      *
      * @param $title
      * @param $desctiption
+     * @param string $page_type
      * @return array
      */
-    public static function generate_meta($title, $desctiption)
+    public static function generate_meta($title, $desctiption, $page_type = 'method')
     {
         $meta_title = $title;
         $meta_desc = substr($desctiption, 0, 160);
         return array(
             BTCPLG_META_TITLE => $meta_title,
-            BTCPLG_META_DESC => $meta_desc
+            BTCPLG_META_DESC => $meta_desc,
+            'btc_page_type' => $page_type
         );
     }
 
@@ -91,7 +93,7 @@ class Bitcoincore_Admin extends Bitcoincore
             'post_title' => $method_name,
             'post_type' => 'page',
             'post_parent' => $parent_id,
-            'meta_input' => self::generate_meta($method_name . ' ' . $version_name, $description)
+            'meta_input' => self::generate_meta($method_name . ' | ' . $version_name, $description)
         ));
         // Записываем данные в БД
         $result = $wpdb->insert($wpdb->prefix . BTCPLG_TBL_METHODS_VERSIONS, array(
@@ -128,6 +130,9 @@ class Bitcoincore_Admin extends Bitcoincore
                 'post_status' => 'publish',
                 'post_title' => $name,
                 'post_type' => 'page',
+                'meta_input' => array(
+                        'btc_page_type' => 'version'
+                )
             ));
             $wpdb->insert($prefix . BTCPLG_TBL_VERSIONS, array('name' => $name, 'page_id' => $page_id));
             $version_id = $wpdb->get_results("SELECT id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE page_id = {$page_id}");
