@@ -71,14 +71,14 @@
                                             <a class="text-success"
                                                href="<? echo get_page_link($pages_id[$version_key]) ?>"
                                                title="<? echo !empty($version_desc) ? wp_filter_nohtml_kses($version_desc) : 'Missing description' ?>">
-                                                <? include(BTCPLUGIN__DIR . 'assets/check.svg'); ?>
+                                                <? include(BTCPLUGIN__DIR . 'assets/img/check.svg'); ?>
                                             </a>
                                         </td>
                                         <? continue 2;
                                     }
                                 } ?>
                                 <td class="table-danger text-danger text-center">
-                                    <? include(BTCPLUGIN__DIR . 'assets/times.svg'); ?>
+                                    <? include(BTCPLUGIN__DIR . 'assets/img/times.svg'); ?>
                                 </td>
                                 <?
                             }

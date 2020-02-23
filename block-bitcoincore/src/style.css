@@ -23,3 +23,7 @@
     background-color: #f79019;
     border-color: #f79019;
 }
+
+.no-hover:hover {
+    background: none !important;
+}

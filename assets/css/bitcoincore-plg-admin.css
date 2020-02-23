@@ -1,0 +1,386 @@
+table {
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    border-spacing: 0;
+    width: 100%;
+    clear: both;
+    margin: 1em 0;
+    background: #fff;
+    border-collapse: collapse;
+}
+
+thead th, thead td {
+    vertical-align: middle;
+    border-bottom: 1px solid #ccd0d4;
+    text-align: left;
+    padding: 8px;
+}
+
+table td, table th {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+tfoot tr {
+    text-align: left;
+}
+
+form {
+    display: inline-block;
+}
+
+.row-actions {
+    color: #ddd;
+    font-size: 13px;
+    padding: 2px 0 0;
+    position: relative;
+    left: -9999em;
+}
+
+tr:hover .row-actions {
+    position: static;
+}
+
+.svg-inline--fa {
+    display: inline-block;
+    font-size: inherit;
+    height: 1em;
+    overflow: visible;
+    vertical-align: -.125em;
+}
+
+/* ------CONTROL-BAR------- */
+
+.control-bar span {
+    vertical-align: middle;
+}
+
+.control-bar span:hover {
+    cursor: pointer;
+    text-shadow: -1px 0px 1px black;
+}
+
+.control-bar span:active {
+    font-size: 18px;
+}
+
+.control-bar span.dashicons-no-alt,
+.btn-edit-cancel {
+    color: red;
+}
+
+.control-bar-version,
+.control-bar-category,
+.control-bar-blockchain{
+    position: relative;
+    left: -9999em;
+    margin-left: 1em;
+    display: inline-block;
+}
+
+.control-bar-method {
+    position: relative;
+    left: -9999em;
+    margin-left: 1em;
+    display: inline-block;
+    float: right;
+}
+
+tr:hover .control-bar-method,
+th:hover .control-bar-version,
+th:hover .control-bar-category,
+tr:hover .control-bar-blockchain{
+    position: static;
+}
+
+.input-edit-version,
+.input-edit-category,
+.input-edit-blockchain{
+    display: inline-block;
+    height: 23px;
+    width: auto;
+}
+
+.btn-edit {
+    padding: 0;
+    border: none;
+    background: none;
+    vertical-align: middle;
+    line-height: 1em;
+}
+
+.btn-edit-success {
+    color: green;
+}
+
+.btn-edit-cancel {
+    color: red;
+}
+
+/* ------ADD------- */
+/*
+.form-add {
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    margin: 1em 0;
+    padding: .75rem;
+    background-color: #f9f9f9;
+}
+
+.form-add form {
+    width: 100%;
+}
+
+.form-add span {
+    padding: 10px;
+    font-style: italic;
+}
+
+.form-add_col-1 label {
+    text-align: end;
+}
+
+.form-add_col-1 label > span, .custom-meta label > span {
+    float: left;
+    line-height: 0.3em;
+}
+
+.form-add_col-1 {
+    width: 25%;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.form-add_col-1 > span {
+    margin: 0;
+    padding: .2em .5em 0;
+    line-height: 2.5;
+    font-weight: 600;
+}
+
+.form-add_col-1 label, .form-add_col-1 select {
+    margin: 10px;
+    display: block;
+}
+
+.form-add_col-2 {
+    width: 73%;
+    padding: 10px 0 0 10px;
+    display: inline-block;
+}
+
+.form-add_col-2 label {
+    text-align: end;
+    padding: 10px 0;
+}
+
+.form-add_col-2 textarea {
+    vertical-align: middle;
+    resize: both;
+}
+
+.submit-add {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.btn-show-add:after {
+    content: '\271A';
+}
+
+.btn-active:after {
+    content: '\2716';
+}
+*/
+/* ------ADD AND EDIT------- */
+
+.control-bar-add {
+    text-align: right;
+    display: inline-block;
+    width: 100%;
+}
+
+.control-bar-add #add-method{
+    text-align: left;
+}
+
+#add-version label,
+#add-category label,
+#add-blockchain label{
+    margin-bottom: 0;
+}
+
+.show-form {
+    padding: 1em 0;
+}
+
+.form-add {
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    margin: 1em 0;
+    padding: .75rem;
+    background-color: #f9f9f9;
+}
+
+.edit-bar form,
+.form-add form {
+    width: 100%;
+}
+
+.edit-bar span,
+.form-add span {
+    padding: 10px;
+    font-style: italic;
+}
+
+.form-edit_col-1 label > span,
+.form-add_col-1 label > span {
+    float: left;
+    line-height: 0.3em;
+}
+
+.form-edit_col-1 > span,
+.form-add_col-1 > span {
+    margin: 0;
+    padding: .2em .5em 0;
+    line-height: 2.5;
+    font-weight: 600;
+}
+
+.form-edit_col-1 label,
+.form-edit_col-1 select,
+.form-add_col-1 label,
+.form-add_col-1 select {
+    margin: 10px;
+    display: block;
+}
+
+.form-edit_col-2 label,
+.form-add_col-1 label{
+    text-align: end;
+    padding: 10px 0;
+}
+
+.form-edit_col-2 textarea,
+.form-add_col-1 textarea{
+    width: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+    resize: both;
+}
+
+.submit-edit,
+.submit-add{
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.version_checkbox {
+    margin: 1em 0 !important;
+}
+
+.version_checkbox:not(:checked) ~ .version_desc {
+    display: none;
+}
+
+.version_checkbox:checked ~ .version_desc {
+    display: inherit;
+}
+
+.version_desc > textarea {
+    width: 100%;
+    max-width: 100%;
+    display: block;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.version_desc p {
+    margin-left: 1em;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* ------DELETE------ */
+
+.submit-delete {
+    background: transparent;
+    border: none;
+    text-decoration: underline;
+    color: #0073aa;
+    padding: 0;
+}
+
+.submit-delete:hover {
+    cursor: pointer;
+    color: #00a0d2;
+}
+
+.submit-delete:focus {
+    color: #124964;
+    box-shadow: 0 0 0 1px #5b9dd9, 0 0 2px 1px rgba(30, 140, 190, .8);
+    outline: 1px solid transparent;
+}
+
+/* ------IMPORT------ */
+
+.import-form {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    background: #fff;
+
+}
+
+.import-form > form > * {
+    display: block;
+    margin: 1em !important;
+}
+
+.import-form > form > div label {
+    margin-left: 1em;
+    line-height: 2.3em;
+}
+
+/* ------SORTABLE------ */
+
+.sortable-placeholder {
+    padding: 24px;
+    border: 2px dotted #ccc;
+    cursor: move;
+    margin-top: 12px;
+}
+
+/* ------FILTER_VERSIONS------ */
+
+#filter-versions {
+    position: absolute;
+    border: 1px solid #dee2e6 !important;
+    padding: 1em;
+    background-color: white;
+    z-index: 999;
+}
+
+#filter-versions label {
+    display: block;
+    padding-right: 1em;
+}
+
+#filter-versions label input {
+    margin: 0 1em;
+}
+
+#filter-versions button {
+    display: block;
+    margin: auto;
+    border-radius: 0.65rem;
+    color: #fff;
+    background-color: #f79019;
+    border-color: #f79019;
+}
+
+/* ------OTHER------ */
+
+.no-hover:hover {
+    background: none !important;
+}

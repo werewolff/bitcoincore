@@ -100,8 +100,8 @@ class Bitcoincore_Main_Widget extends WP_Widget
 
     public function register_assets()
     {
-        wp_enqueue_style('bitcoincore-widget-style', plugins_url('/assets/bitcoincore-plg-widget.css', __FILE__));
-        wp_enqueue_script('bitcoincore-widget-script', plugins_url('/assets/bitcoincore-plg-widget.js', __FILE__), array('jquery'));
+        wp_enqueue_style('bitcoincore-widget-style', plugins_url('/assets/css/bitcoincore-plg-widget.css', __FILE__));
+        wp_enqueue_script('bitcoincore-widget-script', plugins_url('/assets/js/bitcoincore-plg-widget.js', __FILE__), array('jquery'));
     }
 
     public static function register_widget()
