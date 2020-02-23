@@ -112,6 +112,23 @@ class Bitcoincore_Admin extends Bitcoincore
         );
     }
 
+    public static function change_meta_title_children($parent_id, $prev_value, $next_value)
+    {
+        $children = get_posts(array(
+            'post_parent' => $parent_id,
+            'numberposts' => -1,
+            'post_type' => 'bitcoincore'
+        ));
+        if (count($children) > 0) {
+            foreach ($children AS $child) {
+                $meta_title = get_post_meta($child->ID, BTCPLG_META_TITLE, true);
+                $meta_title = str_replace($prev_value, $next_value, $meta_title);
+                update_post_meta($child->ID, BTCPLG_META_TITLE, $meta_title);
+                self::change_meta_title_children($child->ID, $prev_value, $next_value); //рекурсия
+            }
+        }
+    }
+
     /**
      * @param $method_name
      * @param $method_id
@@ -156,7 +173,7 @@ class Bitcoincore_Admin extends Bitcoincore
     }
 
     /**
-     * Create version in database and create page with SHORTCODE
+     * Creates version in database and create page with SHORTCODE
      *
      * @param $name
      * @param $blockchain_id
@@ -167,7 +184,7 @@ class Bitcoincore_Admin extends Bitcoincore
         $prefix = $wpdb->prefix;
         $version_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE name = %s AND blockchain_id = %d", $name, $blockchain_id));
         if (!isset($version_id)) { // Если не существует версии, создаем
-            $blockchain_page_id = $wpdb->get_var($wpdb->prepare("SELECT page_id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE id = %d", $blockchain_id));
+            $blockchain = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE id = %d", $blockchain_id))[0];
             //создаем страницу
             $page_id = wp_insert_post(array(
                 'comment_status' => 'closed',
@@ -176,11 +193,9 @@ class Bitcoincore_Admin extends Bitcoincore
                 'post_name' => is_numeric($name) ? 'version-' . $name : $name,
                 'post_status' => 'publish',
                 'post_title' => $name,
-                'post_parent' => $blockchain_page_id,
+                'post_parent' => $blockchain->page_id,
                 'post_type' => 'bitcoincore',
-                'meta_input' => array(
-                    'btc_page_type' => 'version'
-                )
+                'meta_input' => self::generate_meta($name . ' ' . $blockchain->name, '', 'version')
             ));
             $max_order = $wpdb->get_var("SELECT MAX(`order`) FROM " . $prefix . BTCPLG_TBL_VERSIONS);
             $order = (int)$max_order + 1;
@@ -193,6 +208,10 @@ class Bitcoincore_Admin extends Bitcoincore
         }
     }
 
+    /**
+     * Creates  blockchain
+     * @param $name
+     */
     public static function create_blockchain($name)
     {
         global $wpdb;
@@ -208,9 +227,7 @@ class Bitcoincore_Admin extends Bitcoincore
                 'post_status' => 'publish',
                 'post_title' => $name,
                 'post_type' => 'bitcoincore',
-                'meta_input' => array(
-                    'btc_page_type' => 'blockchain'
-                )
+                'meta_input' => self::generate_meta($name, '', 'blockchain')
             ));
             $wpdb->insert($prefix . BTCPLG_TBL_BLOCKCHAINS, array('name' => $name, 'page_id' => $page_id));
             $blockchain_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE name = %s", $name));
@@ -222,7 +239,7 @@ class Bitcoincore_Admin extends Bitcoincore
     }
 
     /**
-     * Method execute add action for $_POST data
+     * Adds a specific entity.
      * @param $type
      */
     public static function action_add($type)
@@ -277,7 +294,7 @@ class Bitcoincore_Admin extends Bitcoincore
     }
 
     /**
-     * Method execute edit action for $_POST data
+     * Сhanges a specific entity.
      * @param $type
      */
     public static function action_edit($type)
@@ -294,25 +311,19 @@ class Bitcoincore_Admin extends Bitcoincore
 
         //Версия
         if ($type === 'version' && $name !== $prev_name) {
-            $page_id = $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE id = {$id}");
+            $version = $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE id = {$id}")[0];
             wp_update_post(array(
-                'ID' => $page_id[0]->page_id,
+                'ID' => $version->page_id,
                 'post_name' => $name,
                 'post_title' => $name
             ));
-
+            // Обновляем мета
+            $meta_title = get_post_meta($version->page_id, BTCPLG_META_TITLE, true);
+            $meta_title = str_replace($prev_name, $name, $meta_title);
+            update_post_meta($version->page_id, BTCPLG_META_TITLE, $meta_title);
             // изменяем мета у дочерних страниц
-            $posts = get_posts(array(
-                'post_parent' => $page_id[0]->page_id,
-                'numberposts' => -1,
-                'post_type' => 'bitcoincore'
-            ));
-            foreach ($posts AS $post) {
-                $meta_title = get_post_meta($post->ID, BTCPLG_META_TITLE, true);
-                $meta_title = str_replace($prev_name, $name, $meta_title);
-                update_post_meta($post->ID, BTCPLG_META_TITLE, $meta_title);
-
-            }
+            self::change_meta_title_children($version->page_id, $prev_name, $name);
+            //
             $wpdb->update($prefix . BTCPLG_TBL_VERSIONS, array('name' => $name), array('id' => $id));
 
         }
@@ -413,25 +424,16 @@ class Bitcoincore_Admin extends Bitcoincore
         }
 
         if ($type === 'blockchain' && $prev_name !== $name) {
-            $page_id = $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE id = {$id}");
+            $blockchain = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE id = {$id}")[0];
             wp_update_post(array(
-                'ID' => $page_id[0]->page_id,
+                'ID' => $blockchain->page_id,
                 'post_name' => $name,
                 'post_title' => $name
             ));
-
+            // Обновляем мета
+            update_post_meta($blockchain->page_id, BTCPLG_META_TITLE, $name);
             // изменяем мета у дочерних страниц
-            $posts = get_posts(array(
-                'post_parent' => $page_id[0]->page_id,
-                'numberposts' => -1,
-                'post_type' => 'bitcoincore'
-            ));
-            foreach ($posts AS $post) {
-                $meta_title = get_post_meta($post->ID, BTCPLG_META_TITLE, true);
-                $meta_title = str_replace($prev_name, $name, $meta_title);
-                update_post_meta($post->ID, BTCPLG_META_TITLE, $meta_title);
-
-            }
+            self::change_meta_title_children($blockchain->page_id, $prev_name, $name);
             $wpdb->update($prefix . BTCPLG_TBL_BLOCKCHAINS, array('name' => $name), array('id' => $id));
             // Перезагрузка чтобы изменения отобразились в меню
             echo '<script type="application/javascript">location.reload()</script>';
@@ -439,7 +441,7 @@ class Bitcoincore_Admin extends Bitcoincore
     }
 
     /**
-     * Method execute delete action for $_POST data
+     * Removes a specific entity
      * @param $type
      */
     public
@@ -448,19 +450,24 @@ class Bitcoincore_Admin extends Bitcoincore
         global $wpdb;
         $prefix = $wpdb->prefix;
         if ($type === 'version') {
-
-            $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE id = {$_POST['id']}");
+            $version_page_id = $wpdb->get_var("SELECT page_id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE id = {$_POST['id']}");
+            $methods_pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE version_id = {$_POST['id']}");
+            // Удаляем страницы с методами данной версии
+            foreach ($methods_pages_id as $method_page_id) {
+                // Удаляем страницы
+                wp_delete_post($method_page_id->page_id, true);
+            }
             $wpdb->delete($prefix . BTCPLG_TBL_VERSIONS, array('id' => $_POST['id']), array('%d'));
-            wp_delete_post($page_id[0]->page_id, true);
+            wp_delete_post($version_page_id, true);
         }
 
         if ($type === 'category') {
             //Получаем ID страниц
-            $pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE category_id = {$_POST['id']}");
+            $methods_pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE category_id = {$_POST['id']}");
             // Удаляем страницы с методами в данной категории
-            foreach ($pages_id as $p_id) {
+            foreach ($methods_pages_id as $method_page_id) {
                 // Удаляем страницы
-                wp_delete_post($p_id->page_id, true);
+                wp_delete_post($method_page_id->page_id, true);
             }
             // Удаляем саму категорию из базы
             $wpdb->delete($prefix . BTCPLG_TBL_CATEGORIES, array('id' => $_POST['id']), array('%d'));
