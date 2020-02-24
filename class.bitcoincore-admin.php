@@ -441,77 +441,120 @@ class Bitcoincore_Admin extends Bitcoincore
     }
 
     /**
+     * @param $id
+     */
+    public static function delete_blockchain($id)
+    {
+        global $wpdb;
+        $prefix = $wpdb->prefix;
+        // Получаем ID страницы блокчейна
+        $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE id = {$id}");
+        // Получаем версии данного блокчейна
+        $versions = parent::get_data(BTCPLG_TBL_VERSIONS, $id);
+        foreach ($versions as $version) {
+            // Получаем страницы методов каждой версии
+            $pages_methods = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE id = {$version->id}");
+            foreach ($pages_methods as $page_method) {
+                // Удаляем страницы методов
+                wp_delete_post($page_method->page_id, true);
+            }
+            // Удаляем страницы версии
+            wp_delete_post($version->page_id, true);
+        }
+        // Удаляем страницу блокчейна
+        wp_delete_post($page_id[0]->page_id, true);
+    }
+
+    /**
+     * @param $id
+     */
+    public static function delete_version($id)
+    {
+        global $wpdb;
+        $prefix = $wpdb->prefix;
+        $version_page_id = $wpdb->get_var("SELECT page_id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE id = {$id}");
+        $methods_pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE version_id = {$id}");
+        // Удаляем страницы с методами данной версии
+        foreach ($methods_pages_id as $method_page_id) {
+            // Удаляем страницы
+            wp_delete_post($method_page_id->page_id, true);
+        }
+        $wpdb->delete($prefix . BTCPLG_TBL_VERSIONS, array('id' => $id), array('%d'));
+        wp_delete_post($version_page_id, true);
+    }
+
+    /**
+     * @param $id
+     */
+    public static function delete_category($id)
+    {
+        global $wpdb;
+        $prefix = $wpdb->prefix;
+        //Получаем ID страниц
+        $methods_pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE category_id = {$id}");
+        // Удаляем страницы с методами в данной категории
+        foreach ($methods_pages_id as $method_page_id) {
+            // Удаляем страницы
+            wp_delete_post($method_page_id->page_id, true);
+        }
+        // Удаляем саму категорию из базы
+        $wpdb->delete($prefix . BTCPLG_TBL_CATEGORIES, array('id' => $id), array('%d'));
+    }
+
+    /**
+     * @param $id
+     * @param $blockchain_id
+     * @param null $category_id
+     * @param null $version_id
+     */
+    public static function delete_method($id, $blockchain_id, $category_id = null, $version_id = null)
+    {
+        global $wpdb;
+        $prefix = $wpdb->prefix;
+        $table_mv = $prefix . BTCPLG_TBL_METHODS_VERSIONS;
+        $table_v = $prefix . BTCPLG_TBL_VERSIONS;
+        //Получаем ID страниц
+        $sql = "SELECT {$table_mv}.page_id FROM {$table_mv} ";
+        $sql .= "LEFT JOIN $table_v ON {$table_v}.blockchain_id = {$blockchain_id} ";
+        $sql .= "WHERE method_id = {$id} AND version_id = {$table_v}.id ";
+        $sql .= (isset($version_id)) ? "AND version_id = {$version_id} " : '';
+        $sql .= (isset($category_id)) ? "AND category_id = {$category_id} " : '';
+
+        $pages_id = $wpdb->get_results($sql);
+        foreach ($pages_id as $p_id) {
+            // Удаляем страницы
+            wp_delete_post($p_id->page_id, true);
+        }
+        // Кол-во записей с данным методом
+        $count = $wpdb->get_var("SELECT COUNT(*) FROM {$table_mv} WHERE method_id = {$id}");
+        if ($count == 0) {
+            // Удаляем если метод больше не используется в других версиях
+            $wpdb->delete($table_mv, array('id' => $id), array('%d'));
+        }
+
+    }
+
+    /**
      * Removes a specific entity
      * @param $type
      */
     public
     static function action_delete($type)
     {
-        global $wpdb;
-        $prefix = $wpdb->prefix;
         if ($type === 'version') {
-            $version_page_id = $wpdb->get_var("SELECT page_id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE id = {$_POST['id']}");
-            $methods_pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE version_id = {$_POST['id']}");
-            // Удаляем страницы с методами данной версии
-            foreach ($methods_pages_id as $method_page_id) {
-                // Удаляем страницы
-                wp_delete_post($method_page_id->page_id, true);
-            }
-            $wpdb->delete($prefix . BTCPLG_TBL_VERSIONS, array('id' => $_POST['id']), array('%d'));
-            wp_delete_post($version_page_id, true);
+            self::delete_version($_POST['id']);
         }
 
         if ($type === 'category') {
-            //Получаем ID страниц
-            $methods_pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE category_id = {$_POST['id']}");
-            // Удаляем страницы с методами в данной категории
-            foreach ($methods_pages_id as $method_page_id) {
-                // Удаляем страницы
-                wp_delete_post($method_page_id->page_id, true);
-            }
-            // Удаляем саму категорию из базы
-            $wpdb->delete($prefix . BTCPLG_TBL_CATEGORIES, array('id' => $_POST['id']), array('%d'));
+            self::delete_category($_POST['id']);
         }
 
         if ($type === 'method') {
-            //Получаем ID страниц
-            $pages_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE method_id = {$_POST['id']} AND category_id = {$_POST['category_id']}");
-            //Удаляем записи из бд
-            $wpdb->delete($prefix . BTCPLG_TBL_METHODS_VERSIONS,
-                array(
-                    'method_id' => $_POST['id'],
-                    'category_id' => $_POST['category_id']
-                ),
-                array('%d', '%d'));
-            foreach ($pages_id as $p_id) {
-                // Удаляем страницы
-                wp_delete_post($p_id->page_id, true);
-            }
-            // Кол-во записей с данным методом
-            $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE method_id = {$_POST['id']}");
-            if ($count == 0) {
-                // Удаляем если метод больше не используется в других версиях
-                $wpdb->delete($prefix . BTCPLG_TBL_METHODS, array('id' => $_POST['id']), array('%d'));
-            }
+            self::delete_method($_POST['id'], $_POST['blockchain_id'], $_POST['category_id']);
         }
 
         if ($type === 'blockchain') {
-            // Получаем ID страницы блокчейна
-            $page_id = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE id = {$_POST['id']}");
-            // Получаем версии данного блокчейна
-            $versions = parent::get_data(BTCPLG_TBL_VERSIONS, $_POST['id']);
-            foreach ($versions as $version) {
-                // Получаем страницы методов каждой версии
-                $pages_methods = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE id = {$version->id}");
-                foreach ($pages_methods as $page_method) {
-                    // Удаляем страницы методов
-                    wp_delete_post($page_method->page_id, true);
-                }
-                // Удаляем страницы версии
-                wp_delete_post($version->page_id, true);
-            }
-            // Удаляем страницу блокчейна
-            wp_delete_post($page_id[0]->page_id, true);
+            self::delete_blockchain($_POST['id']);
         }
     }
 
@@ -592,36 +635,95 @@ class Bitcoincore_Admin extends Bitcoincore
      * @param $data
      * @param bool $mode_full_sync
      */
-    public
-    static function import($data, $mode_full_sync = false)
+    public static function import($data, $mode_full_sync = false)
     {
         global $wpdb;
         $prefix = $wpdb->prefix;
-
-        $tbl_m = $wpdb->prefix . BTCPLG_TBL_METHODS;
-        $tbl_mv = $wpdb->prefix . BTCPLG_TBL_METHODS_VERSIONS;
-        $tbl_v = $wpdb->prefix . BTCPLG_TBL_VERSIONS;
-        $tbl_c = $wpdb->prefix . BTCPLG_TBL_CATEGORIES;
-
-        $versions = (array)parent::get_data(BTCPLG_TBL_VERSIONS, self::$current_blockchain_id);
-        $versions_name = array_column($versions, 'name');
-        $categories = (array)parent::get_data(BTCPLG_TBL_CATEGORIES);
-        $categories_name = array_column($categories, 'name');
-        $methods_db = (array)$wpdb->get_results("SELECT * FROM " . $tbl_m);
-        $methods_name_db = array_column($methods_db, 'name');
-        $methods_name_for_del = $methods_name_db;
+        $blockchains = (array)parent::get_data(BTCPLG_TBL_BLOCKCHAINS);
+        $blockchains_column_name = array_column($blockchains, 'name');
+        $categories_in_db = (array)parent::get_data(BTCPLG_TBL_CATEGORIES);
+        $categories_column_name = array_column($categories_in_db, 'name');
+        $categories_import = array();
         $log = array(
+            'delete_b' => 0,
             'delete_v' => 0,
             'delete_c' => 0,
             'delete_m' => 0,
             'delete_mv' => 0,
+            'add_b' => 0,
             'add_v' => 0,
             'add_c' => 0,
             'add_m' => 0,
             'add_mv' => 0,
             'change_desc' => 0,
         );
+        // Блокчейны
+        foreach ($data as $blockchain_name => $versions) {
+            if (!in_array(strtolower($blockchain_name), array_map('mb_strtolower', $blockchains_column_name))) { // Если блокчейна нет в базе, то создаем его
+                self::create_blockchain($blockchain_name);
+                $log['add_b']++;
+            }
+            $blockchain_id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE name = '{$blockchain_name}'");
+            $versions_in_db = (array)parent::get_data(BTCPLG_TBL_VERSIONS, $blockchain_id);
+            $versions_column_name = array_column($versions_in_db, 'name');
+            // Версии
+            foreach ($versions as $version_name => $categories){
+                if (!in_array(strtolower($version_name), array_map('mb_strtolower', $versions_column_name))) { // Если версии нет в базе, то создаем ее
+                    self::create_version($version_name, $blockchain_id);
+                    $log['add_v']++;
+                }
+                // Категории
+                foreach ($categories as $category_name => $methods){
+                    if (!in_array(strtolower($category_name), array_map('mb_strtolower', $categories_column_name))) { // Если категории нет в базе, то создаем ее
+                        $wpdb->insert($prefix . BTCPLG_TBL_CATEGORIES, array('name' => $category_name));
+                        $log['add_c']++;
+                    }
+                    $categories_import[] = $category_name;
+                    // Методы
+                    foreach ($methods as $method_name => $description){
+                        
+                    }
+                }
+            }
+            // Версии
+            if ($mode_full_sync) {
+                $versions_import = array_map('mb_strtolower', array_keys($versions));
+                $versions_column_name = array_map('mb_strtolower', $versions_column_name);
+                $versions_diff = array_diff($versions_column_name, $versions_import);
+                foreach ($versions_diff as $version_diff) {
+                    $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE name = '{$version_diff}' AND blockchain_id = {$blockchain_id}");
+                    self::delete_version($id);
+                    $log['delete_v']++;
+                }
+            }
+
+        }
+        // Блокчейны
+        if ($mode_full_sync) {
+            $blockchains_import = array_map('mb_strtolower', array_keys($data));
+            $blockchains_column_name = array_map('mb_strtolower', $blockchains_column_name);
+            $blockchains_diff = array_diff($blockchains_column_name, $blockchains_import);
+            foreach ($blockchains_diff as $blockchain_diff) {
+                $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . "WHERE name = '{$blockchain_diff}'");
+                self::delete_blockchain($id);
+                $log['delete_b']++;
+            }
+        }
+
+        // Категории
+        if ($mode_full_sync) {
+            $categories_import = array_map('mb_strtolower', $categories_import);
+            $categories_column_name = array_map('mb_strtolower', $categories_column_name);
+            $categories_diff = array_diff($categories_column_name, $categories_import);
+            foreach ($categories_diff as $category_diff) {
+                $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_CATEGORIES . " WHERE name = '{$category_diff}'");
+                self::delete_category($id);
+                $log['delete_c']++;
+            }
+        }
+
         /* ВЕРСИИ */
+        /*
         foreach ($data['versions'] as $version) {
             if (in_array($version, $versions_name)) { // поиск в массиве версии
                 $i = array_search($version, $versions_name); // ищем индекс
@@ -633,6 +735,7 @@ class Bitcoincore_Admin extends Bitcoincore
         }
 
         /* КАТЕГОРИИ И МЕТОДЫ*/
+        /*
         foreach ($data['data'] as $category => $methods) {
             if (in_array($category, $categories_name)) { // поиск в массиве текущей категории
                 $i = array_search($category, $categories_name); // ищем индекс
@@ -745,45 +848,39 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC")[0];
                 $log['delete_m']++;
             }
         }
-
+*/
         // LOG
         printf('<div class="notice notice-success is-dismissible">
+                        <p>Добавлено блокчейнов: %s</p>
                         <p>Добавлено версий: %s</p>
                         <p>Добавлено категорий: %s</p>
                         <p>Добавлено методов: %s</p>
                         <p>Добавлено версий к методам: %s</p>
+                        <p>Удалено блокчейнов: %s</p>
                         <p>Удалено версий: %s</p>
                         <p>Удалено категорий: %s</p>
                         <p>Удалено методов: %s</p>
                         <p>Удалено версий у методов: %s</p>
                         <p>Изменено описаний: %s</p>
-                    </div>', $log['add_v'], $log['add_c'], $log['add_m'], $log['add_mv'], $log['delete_v'], $log['delete_c'], $log['delete_m'], $log['delete_mv'], $log['change_desc']);
+                    </div>', $log['add_b'], $log['add_v'], $log['add_c'], $log['add_m'], $log['add_mv'], $log['delete_b'], $log['delete_v'], $log['delete_c'], $log['delete_m'], $log['delete_mv'], $log['change_desc']);
 
     }
 
     /**
      * Render import page
      */
-    public
-    static function render_import()
+    public static function render_import()
     {
         self::register_assets();
         if (isset($_FILES['btc_import_file'])) {
             $file = $_FILES['btc_import_file'];
             if ($file['type'] == 'application/json') {
                 $content = json_decode(file_get_contents($file['tmp_name']), TRUE);
-                if (isset($content['versions']) && isset($content['data']) && isset($content['help'])) {
-                    $import_full_sync = false;
-                    if (isset($_POST['import_full_sync']) && $_POST['import_full_sync'] == true)
-                        $import_full_sync = true;
-                    self::import($content, $import_full_sync);
-                } else {
-                    ?>
-                    <div class="notice notice-error is-dismissible">
-                        <p>Неверная структура файла</p>
-                    </div>
-                    <?
-                }
+                $import_full_sync = false;
+                if (isset($_POST['import_full_sync']) && $_POST['import_full_sync'] == true)
+                    $import_full_sync = true;
+                self::import($content, $import_full_sync);
+
             } else {
                 ?>
                 <div class="notice notice-error is-dismissible">

@@ -103,7 +103,7 @@ jQuery(document).ready(function ($) {
         var id = $(this).attr('id');
         var idCategory = id.match(/\d+/)[0];
         var nameCategory = $(this).parent().prev().text();
-        var confirmDel = confirm("Удалить категорию: " + nameCategory + "?");
+        var confirmDel = confirm("Удалить категорию: " + nameCategory + "?" + "\nВНИМАНИЕ! Будут удалены ВСЕ методы в данной категории, а также данная категория и методы удалятся в ДРУГИХ блокчейнах!");
         if (confirmDel) {
             var request = $.ajax({
                 type: "POST",
@@ -127,8 +127,10 @@ jQuery(document).ready(function ($) {
     //delete method
     $('[id^=delete-method-]').bind('click', function () {
         var id = $(this).attr('id');
-        var idMethod = id.match(/\d+/)[0];
-        var idCategory = id.match(/\d+/g)[1];
+        var matches = id.match(/\d+/g);
+        var idMethod = matches[0];
+        var idCategory = matches[1];
+        var idBlockchain = matches[2];
         var nameMethod = $(this).parent().prev().text();
         var request = $.ajax({
             async: false,
@@ -136,7 +138,8 @@ jQuery(document).ready(function ($) {
             data: {
                 action: 'delete_method',
                 id: idMethod,
-                category_id: idCategory
+                category_id: idCategory,
+                blockchain_id: idBlockchain
             },
             dataType: "html"
         });

@@ -125,7 +125,7 @@
                             <span><? echo $method->name ?></span>
                             <div class="control-bar control-bar-method">
                                 <span class="dashicons dashicons-edit" id="edit-method-<? echo $method->id?>"></span>
-                                <span class="dashicons dashicons-no-alt" id="delete-method-<? echo $method->id . '-' . $category->id?>"></span>
+                                <span class="dashicons dashicons-no-alt" id="delete-method-<? echo $method->id . '-' . $category->id . '-' . $blockchain_id?>"></span>
                             </div>
                         </td>
                     <? } ?>
