@@ -119,81 +119,6 @@ tr:hover .control-bar-blockchain{
     color: red;
 }
 
-/* ------ADD------- */
-/*
-.form-add {
-    border: 1px solid #ccd0d4;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
-    margin: 1em 0;
-    padding: .75rem;
-    background-color: #f9f9f9;
-}
-
-.form-add form {
-    width: 100%;
-}
-
-.form-add span {
-    padding: 10px;
-    font-style: italic;
-}
-
-.form-add_col-1 label {
-    text-align: end;
-}
-
-.form-add_col-1 label > span, .custom-meta label > span {
-    float: left;
-    line-height: 0.3em;
-}
-
-.form-add_col-1 {
-    width: 25%;
-    vertical-align: top;
-    display: inline-block;
-}
-
-.form-add_col-1 > span {
-    margin: 0;
-    padding: .2em .5em 0;
-    line-height: 2.5;
-    font-weight: 600;
-}
-
-.form-add_col-1 label, .form-add_col-1 select {
-    margin: 10px;
-    display: block;
-}
-
-.form-add_col-2 {
-    width: 73%;
-    padding: 10px 0 0 10px;
-    display: inline-block;
-}
-
-.form-add_col-2 label {
-    text-align: end;
-    padding: 10px 0;
-}
-
-.form-add_col-2 textarea {
-    vertical-align: middle;
-    resize: both;
-}
-
-.submit-add {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.btn-show-add:after {
-    content: '\271A';
-}
-
-.btn-active:after {
-    content: '\2716';
-}
-*/
 /* ------ADD AND EDIT------- */
 
 .control-bar-add {
@@ -338,17 +263,23 @@ tr:hover .control-bar-blockchain{
 }
 
 .import-form > form > div label {
-    margin-left: 1em;
-    line-height: 2.3em;
+    display: block;
 }
 
 /* ------SORTABLE------ */
 
-.sortable-placeholder {
-    padding: 24px;
-    border: 2px dotted #ccc;
-    cursor: move;
-    margin-top: 12px;
+body.dragging, body.dragging * {
+    cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+.sortable-placeholder{
+
 }
 
 /* ------FILTER_VERSIONS------ */

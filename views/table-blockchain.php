@@ -27,10 +27,10 @@
 <? } ?>
 
 <div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover table-sticky">
-        <thead class="thead-light">
-        <tr>
-            <th class="text-center">
+    <table class="table table-sm table-bordered table-hover table-sticky sorted_head ">
+        <thead class="thead-light ">
+        <tr class="sortable-versions">
+            <th class="text-center not-sortable">
                 <span>Method name</span>
             </th>
             <? foreach ($versions as $version) {
@@ -66,7 +66,7 @@
             $methods_column_category_id = array_column($methods, 'category_id');
             ?>
             <tr class="no-hover">
-                <th class="text-center" colspan="1000">
+                <th class="text-center not-sortable" colspan="1000">
                     <span><? echo $category->name ?></span>
                     <div class="control-bar control-bar-category">
                         <span class="dashicons dashicons-edit" id="edit-category-<? echo $category->id?>"></span>

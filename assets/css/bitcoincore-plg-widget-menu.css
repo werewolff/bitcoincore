@@ -1,0 +1,10 @@
+.menu-left {
+    background-color: #f9f9f9;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 100;
+}
+
+.menu-left ul ul {
+    padding-inline-start: 1em;
+}

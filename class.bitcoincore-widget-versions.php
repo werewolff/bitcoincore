@@ -1,6 +1,6 @@
 <?php
 
-class Bitcoincore_Main_Widget extends WP_Widget
+class Bitcoincore_Versions_Widget extends WP_Widget
 {
     function __construct()
     {
@@ -23,7 +23,12 @@ class Bitcoincore_Main_Widget extends WP_Widget
     {
         global $post, $wpdb;
         $title = apply_filters('widget_title', $instance['title']);
-        $versions = Bitcoincore::get_data(BTCPLG_TBL_VERSIONS);
+        preg_match('/\w+/', $_SERVER['REQUEST_URI'], $blockchain_name);
+        $blockchain_name = $blockchain_name[0];
+        $blockchain_id = $wpdb->get_var("SELECT id FROM ".$wpdb->prefix. BTCPLG_TBL_BLOCKCHAINS." WHERE name = '{$blockchain_name}'");
+        if(!isset($blockchain_id))
+            return;
+        $versions = Bitcoincore::get_data(BTCPLG_TBL_VERSIONS, $blockchain_id);
         $content = array();
         $tbl_mv = $wpdb->prefix . BTCPLG_TBL_METHODS_VERSIONS;
         $is_method = $wpdb->get_var("SELECT COUNT(page_id) FROM $tbl_mv WHERE page_id = $post->ID");
@@ -35,17 +40,15 @@ class Bitcoincore_Main_Widget extends WP_Widget
                 $method_id = $wpdb->get_var("SELECT method_id FROM $tbl_mv WHERE page_id = $post->ID");
                 $method_support = $wpdb->get_var("SELECT COUNT(method_id) FROM $tbl_mv WHERE method_id = $method_id AND version_id = $version_id");
                 $content[] = '<dt class="col-6 pl-5"><a href="' . $page_url . '">' . $version_title . '</a>';
-                if($method_support) {
-                    $svg_check = file_get_contents((BTCPLUGIN__DIR . 'assets/check.svg'));
-                    $content[] = '<dd class="col-6 text-success">'. $svg_check.'</dd>';
+                if ($method_support) {
+                    $svg_check = file_get_contents((BTCPLUGIN__DIR . 'assets/img/check.svg'));
+                    $content[] = '<dd class="col-6 text-success">' . $svg_check . '</dd>';
 
+                } else {
+                    $svg_times = file_get_contents(BTCPLUGIN__DIR . 'assets/img/times.svg');
+                    $content[] = '<dd class="col-6 text-danger">' . $svg_times . '</dd>';
                 }
-                else{
-                    $svg_times = file_get_contents(BTCPLUGIN__DIR . 'assets/times.svg');
-                    $content[] = '<dd class="col-6 text-danger">'. $svg_times.'</dd>';
-                }
-            }
-            else
+            } else
                 $content[] = '<dt class="col-12 text-center mb-2"><a href="' . $page_url . '">' . $version_title . '</a>';
         }
         $content = implode('', $content);
@@ -100,13 +103,13 @@ class Bitcoincore_Main_Widget extends WP_Widget
 
     public function register_assets()
     {
-        wp_enqueue_style('bitcoincore-widget-style', plugins_url('/assets/css/bitcoincore-plg-widget.css', __FILE__));
-        wp_enqueue_script('bitcoincore-widget-script', plugins_url('/assets/js/bitcoincore-plg-widget.js', __FILE__), array('jquery'));
+        wp_enqueue_style('bitcoincore-widget-versions-style', plugins_url('/assets/css/bitcoincore-plg-widget-versions.css', __FILE__));
+        wp_enqueue_script('bitcoincore-widget-versions-script', plugins_url('/assets/js/bitcoincore-plg-widget-versions.js', __FILE__), array('jquery'));
     }
 
     public static function register_widget()
     {
-        register_widget('Bitcoincore_Main_Widget');
+        register_widget('Bitcoincore_Versions_Widget');
     }
 
 }

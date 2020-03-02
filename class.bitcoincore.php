@@ -42,7 +42,7 @@ class Bitcoincore
                 'menu_name' => 'Страницы Bitcoincore'
 
             ),
-            'public' => false,
+            'public' => true,
             'publicly_queryable' => true,
             'show_ui' => true,
             'show_in_menu' => true,
@@ -78,18 +78,22 @@ class Bitcoincore
         wp_enqueue_script('bitcoincore-js');
     }
 
-    public static function render_main_table()
+    public static function render_blockchain_table($blockchain_id)
     {
-        $versions = self::get_data(BTCPLG_TBL_VERSIONS);
+        $versions = self::get_data(BTCPLG_TBL_VERSIONS, $blockchain_id);
         $categories = self::get_data(BTCPLG_TBL_CATEGORIES);
-        $methods = self::get_data(BTCPLG_TBL_METHODS);
+        $methods = self::get_data(BTCPLG_TBL_METHODS, $blockchain_id);
         $view_args = compact('versions', 'categories', 'methods');
 
         self::view('front-table-blockchain', $view_args);
     }
 
     public static function shortcode_blockchain($atts){
-        self::render_main_table();
+        $atts = shortcode_atts(array(
+            'id' => '0',
+        ), $atts);
+        $blockchain_id = $atts['id'];
+        self::render_blockchain_table($blockchain_id);
     }
 
     public static function shortcode_version($atts)

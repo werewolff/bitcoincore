@@ -39,8 +39,9 @@ add_shortcode(BTCPLG_SHORTCODE_VERSION, array('Bitcoincore', 'shortcode_version'
 add_shortcode(BTCPLG_SHORTCODE_BLOCKCHAIN, array('Bitcoincore', 'shortcode_blockchain'));
 
 //widgets
-require_once (BTCPLUGIN__DIR . 'class.bitcoincore-widget.php');
-add_action('widgets_init', array('Bitcoincore_Main_Widget', 'register_widget'));
-
+require_once (BTCPLUGIN__DIR . 'class.bitcoincore-widget-versions.php');
+require_once (BTCPLUGIN__DIR . 'class.bitcoincore-widget-menu.php');
+add_action('widgets_init', array('Bitcoincore_Versions_Widget', 'register_widget'));
+add_action('widgets_init', array('Bitcoincore_Menu_Widget', 'register_widget'));
 //blocks
 //require_once (BTCPLUGIN__DIR . 'block-bitcoincore/index.php');
