@@ -21,7 +21,7 @@
     </form>
 </div>
 <div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover table-sticky">
+    <table class="table table-sm table-bordered table-hover table-sticky table-versions">
         <thead class="thead-light">
         <tr>
             <th class="text-center">

@@ -51,6 +51,11 @@ tr:hover .row-actions {
     vertical-align: -.125em;
 }
 
+.table-versions a{
+    display: block;
+    width: 100%;
+}
+
 /* ------CONTROL-BAR------- */
 
 .control-bar span {

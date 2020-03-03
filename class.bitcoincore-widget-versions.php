@@ -103,6 +103,19 @@ class Bitcoincore_Versions_Widget extends WP_Widget
 
     public function register_assets()
     {
+        wp_register_script(
+            'bitcoincore-widget-versions-script',
+            plugins_url('/assets/js/bitcoincore-plg-widget-versions.js', __FILE__),
+            array('jquery'),
+            filemtime(plugin_dir_path(__FILE__) . 'assets/js/bitcoincore-plg-widget-versions.js')
+        );
+        wp_register_style(
+            'bitcoincore-widget-versions-style',
+            plugins_url('/assets/css/bitcoincore-plg-widget-versions.css', __FILE__),
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . 'assets/css/bitcoincore-plg-widget-versions.css')
+        );
+
         wp_enqueue_style('bitcoincore-widget-versions-style', plugins_url('/assets/css/bitcoincore-plg-widget-versions.css', __FILE__));
         wp_enqueue_script('bitcoincore-widget-versions-script', plugins_url('/assets/js/bitcoincore-plg-widget-versions.js', __FILE__), array('jquery'));
     }

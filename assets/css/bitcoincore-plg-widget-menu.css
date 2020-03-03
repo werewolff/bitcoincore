@@ -1,10 +1,54 @@
 .menu-left {
+    color: #616161;
     background-color: #f9f9f9;
+    font-weight: 500;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: visible;
+    line-height: 1.8;
     z-index: 100;
 }
 
-.menu-left ul ul {
-    padding-inline-start: 1em;
+.menu-left > div {
+    padding-top: 0.5em;
+    border-right: 1px solid #d7d7d7;
+}
+
+.menu-left ul {
+    list-style: none;
+    padding-left: 0.5em;
+}
+
+.menu-left ul ul ul {
+    display: none;
+    padding-left: 0.5em;
+}
+
+.menu-left ul li:last-child {
+    padding-left: 2em;
+}
+
+.menu-left a {
+    color: #616161;
+}
+
+.menu-left a:hover {
+    text-decoration: none;
+}
+
+.menu-left .btn-expand {
+    font-size: 1.5em;
+    vertical-align: middle;
+    line-height: 1rem;
+    padding-right: 1.3em;
+}
+
+.menu-left .btn-expand:hover {
+    color: black;
+    cursor: pointer;
+}
+
+.menu-left .btn-expanded {
+    -webkit-transform: rotate(90deg) translateY(5px);
+    -ms-transform: rotate(90deg) translateY(5px);
+    transform: rotate(90deg) translateY(5px);
 }

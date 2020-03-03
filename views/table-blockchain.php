@@ -27,7 +27,7 @@
 <? } ?>
 
 <div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover table-sticky sorted_head ">
+    <table class="table table-sm table-bordered table-hover table-sticky sorted_head table-versions">
         <thead class="thead-light ">
         <tr class="sortable-versions">
             <th class="text-center not-sortable">
