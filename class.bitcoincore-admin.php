@@ -448,7 +448,7 @@ class Bitcoincore_Admin extends Bitcoincore
         $versions = parent::get_data(BTCPLG_TBL_VERSIONS, $id);
         foreach ($versions as $version) {
             // Получаем страницы методов каждой версии
-            $pages_methods = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE id = {$version->id}");
+            $pages_methods = $wpdb->get_results("SELECT page_id FROM " . $prefix . BTCPLG_TBL_METHODS_VERSIONS . " WHERE version_id = {$version->id}");
             foreach ($pages_methods as $page_method) {
                 // Удаляем страницы методов
                 wp_delete_post($page_method->page_id, true);
