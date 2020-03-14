@@ -3,7 +3,7 @@ jQuery(document).ready(function ($) {
         var headMainTable = $('.table-sticky thead');
         var offsetMainTable = headMainTable.offset();
         var categoryMainTable = $('.table-sticky').find('tbody th');
-        var offsetCategories = new Array();
+        var offsetCategories = [];
         categoryMainTable.each(function (i) {
             offsetCategories[i] = $(this).offset();
         });
@@ -71,6 +71,79 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    // Обработка события onDrop для сортировки
+    function onDropSortable($item, container, _super) {
+        var newIndex = $item.index(); // Новый индекс
+        if (newIndex !== oldIndex) { // Если изменился индекс
+            var i = 0,
+                prevOrder = parseInt($item.children('a').attr('data-order')),
+                nextOrder,
+                changeOrder = {},
+                prevValue = '';
+            if (newIndex < oldIndex) { // переместили назад
+                // опеределяем список сдвинутых элементов
+                for (i = oldIndex; i > newIndex; i--) {
+                    var element = $(container.items[i - 1]);
+                    var order = parseInt(element.children('a').attr('data-order'));
+                    if (i === oldIndex) {
+                        changeOrder[order] = prevOrder;
+                    } else {
+                        changeOrder[order] = prevValue;
+                    }
+                    prevValue = order;
+                    nextOrder = order;
+                }
+            } else if (newIndex > oldIndex) { // переместили вперед
+                // опеределяем список сдвинутых элементов
+                for (i = oldIndex; i < newIndex; i++) {
+                    element = $(container.items[i]); // текущий перетаскиваемый элемент
+                    order = parseInt(element.children('a').attr('data-order')); // его значение порядка в базе
+                    if (i === oldIndex) { // Для первого элемента
+                        changeOrder[order] = prevOrder;
+                        element.children('a').attr('data-order', prevOrder);
+                    } else { // Для остальных
+                        changeOrder[order] = prevValue;
+                        element.children('a').attr('data-order', prevValue);
+                    }
+                    prevValue = order;
+                    nextOrder = order;
+                }
+            }
+            $($item).children('a').attr('data-order', nextOrder); // задаем новый номер сортировки
+            changeOrder[prevOrder] = nextOrder; // Добавляем сам перетаскиваемый элемент
+
+            // Перемещаем остальные строки
+            $item.closest('table').find('tbody tr').each(function (i, row) {
+                row = $(row);
+                if (newIndex < oldIndex) {
+                    row.children().eq(newIndex).before(row.children()[oldIndex]);
+                } else if (newIndex > oldIndex) {
+                    row.children().eq(newIndex).after(row.children()[oldIndex]);
+                }
+            });
+
+            var request = $.ajax({
+                type: "POST",
+                data: {
+                    action: 'order_version',
+                    change_order: changeOrder
+                },
+                dataType: "html"
+            });
+
+            request.done(function () {
+            });
+
+            request.fail(function () {
+                alert('Ошибка при изменение порядка версий. Страница будет перезагружена');
+                window.location.reload();
+            });
+
+        }
+
+        _super($item, container);
+    }
+
     //for sortable versions
     var oldIndex;
     $('.sorted_head tr').sortable({
@@ -85,25 +158,7 @@ jQuery(document).ready(function ($) {
             $item.appendTo($item.parent());
             _super($item, container);
         },
-        onDrop: function  ($item, container, _super) {
-            var field,
-                newIndex = $item.index();
-            console.log($item.children('a').text());
-            console.log($(container.items[oldIndex]).children('a').text());
-            console.log(oldIndex + '>>>' + newIndex);
-            if(newIndex != oldIndex) {
-                $item.closest('table').find('tbody tr').each(function (i, row) {
-                    row = $(row);
-                    if(newIndex < oldIndex) {
-                        row.children().eq(newIndex).before(row.children()[oldIndex]);
-                    } else if (newIndex > oldIndex) {
-                        row.children().eq(newIndex).after(row.children()[oldIndex]);
-                    }
-                });
-            }
-
-            _super($item, container);
-        }
+        onDrop: onDropSortable
     });
 
     function editBarToggle() {
@@ -164,7 +219,7 @@ jQuery(document).ready(function ($) {
                 dataType: "html"
             });
 
-            request.done(function (msg) {
+            request.done(function () {
                 window.location.reload();
             });
 
@@ -263,7 +318,7 @@ jQuery(document).ready(function ($) {
             type: "POST",
             data: {
                 action: 'delete_blockchain',
-                id: idBlockchain,
+                id: idBlockchain
             },
             dataType: "html"
         });

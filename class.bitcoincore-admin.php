@@ -533,8 +533,7 @@ class Bitcoincore_Admin extends Bitcoincore
      * Removes a specific entity
      * @param $type
      */
-    public
-    static function action_delete($type)
+    public static function action_delete($type)
     {
         if ($type === 'version') {
             self::delete_version($_POST['id']);
@@ -553,13 +552,32 @@ class Bitcoincore_Admin extends Bitcoincore
         }
     }
 
+    public static function change_order_version($change_order)
+    {
+        global $wpdb;
+        $tbl_v = $wpdb->prefix . BTCPLG_TBL_VERSIONS;
+        $sql = "UPDATE {$tbl_v} SET `order` = CASE ";
+        foreach ($change_order as $prev_order => $next_order){
+            $sql .= "WHEN `order` = {$prev_order} THEN {$next_order} ";
+        }
+        $sql .= " END WHERE `order` IN (". implode(',', $change_order).")";
+        $sql = esc_sql($sql);
+        $wpdb->query($sql);
+    }
+
+    public static function change_order($type)
+    {
+        if ($type === 'version' && isset($_POST['change_order'])) {
+            self::change_order_version($_POST['change_order']);
+        }
+    }
+
     /**
      *
      * Executes a method appropriate to the type
      *
      */
-    public
-    static function do_action()
+    public static function do_action()
     {
         if (!isset($_POST['action']))
             return;
@@ -578,14 +596,15 @@ class Bitcoincore_Admin extends Bitcoincore
             case 'delete':
                 self::action_delete($obj_type);
                 break;
+            case 'order':
+                self::change_order($obj_type);
         }
     }
 
     /**
      * Render page
      */
-    public
-    static function render()
+    public static function render()
     {
         $tbl_name = self::$current_table;
         if ($tbl_name == BTCPLG_TBL_BLOCKCHAIN) {
@@ -605,16 +624,14 @@ class Bitcoincore_Admin extends Bitcoincore
         }
     }
 
-    public
-    static function render_blockchains()
+    public static function render_blockchains()
     {
         self::$current_table = BTCPLG_TBL_BLOCKCHAINS;
         self::do_action();
         self::render();
     }
 
-    public
-    static function render_blockchain()
+    public static function render_blockchain()
     {
         global $wpdb;
         $blockchain_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM " . $wpdb->prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE name = %s", get_admin_page_title()));

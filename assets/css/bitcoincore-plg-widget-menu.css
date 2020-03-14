@@ -35,6 +35,10 @@
     text-decoration: none;
 }
 
+.menu-left a.active-link{
+    color: #d87400;
+}
+
 .menu-left .btn-expand {
     font-size: 1.5em;
     vertical-align: middle;
@@ -51,4 +55,14 @@
     -webkit-transform: rotate(90deg) translateY(5px);
     -ms-transform: rotate(90deg) translateY(5px);
     transform: rotate(90deg) translateY(5px);
+}
+
+@media (max-width: 768px) {
+    .left-menu-full-screen {
+        position: absolute !important;
+        right: 0;
+        padding: 0 !important;
+        width: 100%;
+        z-index: 9999;
+    }
 }

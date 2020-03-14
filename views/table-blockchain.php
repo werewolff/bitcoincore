@@ -38,7 +38,7 @@
                     continue;
                 ?>
                 <th scope="col" class="text-center">
-                    <a href="<? echo get_page_link($version->page_id) ?>"><? echo $version->name; ?></a>
+                    <a data-order="<? echo $version->order ?>" href="<? echo get_page_link($version->page_id) ?>"><? echo $version->name; ?></a>
                     <div class="control-bar control-bar-version">
                         <span class="dashicons dashicons-edit" id="edit-version-<? echo $version->id?>"></span>
                         <span class="dashicons dashicons-no-alt" id="delete-version-<? echo $version->id?>"></span>

@@ -51,7 +51,7 @@ tr:hover .row-actions {
     vertical-align: -.125em;
 }
 
-.table-versions a{
+.table-versions td a{
     display: block;
     width: 100%;
 }
