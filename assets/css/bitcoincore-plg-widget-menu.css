@@ -1,57 +1,74 @@
-.menu-left {
+#menu-left::-webkit-scrollbar {
+    width: 10px;
+}
+
+#menu-left::-webkit-scrollbar-thumb {
+    border-width: 3px;
+}
+
+#menu-left::-webkit-scrollbar-track {
+    border: 0;
+}
+
+#menu-left {
+    display: none;
+    max-width: 300px;
     color: #616161;
     background-color: #f9f9f9;
     font-weight: 500;
     overflow-x: hidden;
     overflow-y: visible;
     line-height: 1.8;
-    z-index: 100;
-}
-
-.menu-left > div {
-    padding-top: 0.5em;
+    padding-right: 0;
     border-right: 1px solid #d7d7d7;
+    z-index: 100;
+    -ms-overflow-style: none;
 }
 
-.menu-left ul {
+#menu-left > div {
+    padding-top: 0.5em;
+
+}
+
+#menu-left ul {
     list-style: none;
     padding-left: 0.5em;
 }
 
-.menu-left ul ul ul {
+#menu-left ul ul ul {
     display: none;
     padding-left: 0.5em;
 }
 
-.menu-left ul li:last-child {
+#menu-left ul li:last-child {
     padding-left: 2em;
 }
 
-.menu-left a {
+#menu-left a {
     color: #616161;
 }
 
-.menu-left a:hover {
+#menu-left a:hover {
     text-decoration: none;
 }
 
-.menu-left a.active-link{
+#menu-left a.active-link {
     color: #d87400;
 }
 
-.menu-left .btn-expand {
+#menu-left .btn-expand {
     font-size: 1.5em;
     vertical-align: middle;
     line-height: 1rem;
     padding-right: 1.3em;
 }
 
-.menu-left .btn-expand:hover {
+#menu-left .btn-expand:hover {
     color: black;
     cursor: pointer;
 }
 
-.menu-left .btn-expanded {
+#menu-left .btn-expanded {
     -webkit-transform: rotate(90deg) translateY(5px);
     -ms-transform: rotate(90deg) translateY(5px);
     transform: rotate(90deg) translateY(5px);
@@ -63,6 +80,7 @@
         right: 0;
         padding: 0 !important;
         width: 100%;
+        max-width: none!important;
         z-index: 9999;
     }
 }

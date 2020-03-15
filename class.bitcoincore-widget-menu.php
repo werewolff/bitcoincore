@@ -61,7 +61,7 @@ class Bitcoincore_Menu_Widget extends WP_Widget
         }
 
         $content = implode('', $blockchains_list);
-        $content_block = '<div class="menu-left"><div>' . $content . '</div></div>';
+        $content_block = '<div>' . $content . '</div>';
 
         echo $args['before_widget'];
         if (!empty($title)) {

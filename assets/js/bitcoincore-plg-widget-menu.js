@@ -1,6 +1,6 @@
 jQuery(document).ready(function ($) {
     // Раскрытие меню до текущей страницы
-    var currentLinkInMenu = $('#left-menu ul').find('a[href="' + window.location.href + '"]');
+    var currentLinkInMenu = $('#menu-left ul').find('a[href="' + window.location.href + '"]');
     currentLinkInMenu.addClass('active-link');
     currentLinkInMenu.parents('ul').each(function (index) {
 
@@ -15,12 +15,12 @@ jQuery(document).ready(function ($) {
 
     // Кнопка показа меню на маленьких экранах
     $('#btn-toggle-left-menu').bind('click', function () {
-        $('#left-menu').toggleClass('left-menu-full-screen');
-        $('#left-menu').toggle();
+        $('#menu-left').toggleClass('left-menu-full-screen');
+        $('#menu-left').toggle();
     });
 
     // Раскрытие списка
-    $('.menu-left .btn-expand').bind('click', function () {
+    $('#menu-left .btn-expand').bind('click', function () {
         $(this).toggleClass('btn-expanded');
         $(this).parent().nextAll().toggle(200);
     });
@@ -28,9 +28,8 @@ jQuery(document).ready(function ($) {
     // Задаем высоту левого меню исходя из высоты контента
     function setHeightMenuLeft() {
         var contentHeight = $('body > section').height()
-        var menuLeft = $('.menu-left');
+        var menuLeft = $('#menu-left');
         menuLeft.innerHeight(contentHeight);
-        menuLeft.children('div').innerHeight(contentHeight);
     }
 
     setHeightMenuLeft();
