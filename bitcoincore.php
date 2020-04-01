@@ -44,4 +44,4 @@ require_once (BTCPLUGIN__DIR . 'class.bitcoincore-widget-menu.php');
 add_action('widgets_init', array('Bitcoincore_Versions_Widget', 'register_widget'));
 add_action('widgets_init', array('Bitcoincore_Menu_Widget', 'register_widget'));
 //blocks
-//require_once (BTCPLUGIN__DIR . 'block-bitcoincore/index.php');
+require_once (BTCPLUGIN__DIR . 'block-bitcoincore/index.php');

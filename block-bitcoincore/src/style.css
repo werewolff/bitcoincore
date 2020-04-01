@@ -1,29 +1,25 @@
-#filter-versions{
-    position: absolute;
-    border: 1px solid #dee2e6!important;
+.welcome-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 400px);
+    font-size: 0.9em;
+}
+
+.welcome-block > div {
+    max-width: 600px;
     padding: 1em;
-    background-color: white;
-    z-index: 999;
+    border: 1px solid #f79018;
+    background-color: #f7901861;
 }
 
-#filter-versions label{
-    display: block;
-    padding-right: 1em;
+.welcome-block h4{
+    margin: 0 0 1rem;
 }
 
-#filter-versions label input{
-    margin: 0 1em;
-}
 
-#filter-versions button{
-    display: block;
-    margin: auto;
-    border-radius: 0.65rem;
-    color: #fff;
-    background-color: #f79019;
-    border-color: #f79019;
-}
 
-.no-hover:hover {
-    background: none !important;
+.welcome-block ul {
+    list-style-type: decimal;
 }

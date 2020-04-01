@@ -12,6 +12,7 @@
     "lint-js": "wp-scripts lint-js"
   },
   "dependencies": {
+    "@wordpress/block-editor": "^3.7.7",
     "@wordpress/blocks": "^6.9.0"
   }
 }

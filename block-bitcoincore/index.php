@@ -1,9 +1,4 @@
 <?php
-function block_bitcoincore_server_side_render(){
-
-    $content = Bitcoincore::render_main_table();
-    return $content;
-}
 
 function bitcoincore_register_block()
 {
@@ -27,15 +22,14 @@ function bitcoincore_register_block()
     wp_register_style(
         'block-bitcoincore-style',
         plugins_url( 'src/style.css', __FILE__ ),
-        array( ),
+        array(),
         filemtime( plugin_dir_path( __FILE__ ) . 'src/style.css' )
     );
 
     register_block_type('bitcoincore/block-bitcoincore', array(
         'style' => 'block-bitcoincore-style',
         'editor_style' => 'block-bitcoincore-editor',
-        'editor_script' => 'block-bitcoincore',
-        'render_callback' => 'block_bitcoincore_server_side_render'
+        'editor_script' => 'block-bitcoincore'
     ));
 }
 
