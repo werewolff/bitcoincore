@@ -1,5 +1,10 @@
 jQuery(document).ready(function ($) {
 
+    $('.versions h3').click(function () {
+       $(this).toggleClass('show');
+       $(this).next('dl').toggle();
+    });
+
     if ($('table').is('.table-sticky')) {
         var headMainTable = $('.table-sticky thead');
         var offsetMainTable = headMainTable.offset();

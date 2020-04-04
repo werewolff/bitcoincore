@@ -1,3 +1,6 @@
+.row {
+    position: relative;
+}
 
 .svg-inline--fa {
     display: inline-block;
@@ -7,13 +10,27 @@
     vertical-align: -.125em;
 }
 
-.table-versions a{
+.table-versions a {
     display: block;
     width: 100%;
 }
 
-.versions dl {
+.versions > h3 {
+    font-family: dashicons;
+    cursor: pointer;
+}
 
+.versions > h3.show:after {
+    content: "\f140";
+}
+
+.versions > h3:after {
+    content: "\f139";
+    vertical-align: middle;
+}
+
+.versions dl {
+    white-space: pre-wrap;
 }
 
 .versions dt {
@@ -29,24 +46,24 @@
     font-style: italic;
 }
 
-#filter-versions{
+#filter-versions {
     position: absolute;
-    border: 1px solid #dee2e6!important;
+    border: 1px solid #dee2e6 !important;
     padding: 1em;
     background-color: white;
     z-index: 999;
 }
 
-#filter-versions label{
+#filter-versions label {
     display: block;
     padding-right: 1em;
 }
 
-#filter-versions label input{
+#filter-versions label input {
     margin: 0 1em;
 }
 
-#filter-versions button{
+#filter-versions button {
     display: block;
     margin: auto;
     border-radius: 0.65rem;
@@ -56,10 +73,11 @@
 }
 
 @media (max-width: 768px) {
-    .navbar-brand{
+    .navbar-brand {
         text-align: center;
     }
-    .versions dt{
+
+    .versions dt {
         padding: 0.3em 0;
         margin-left: 1.5em;
     }

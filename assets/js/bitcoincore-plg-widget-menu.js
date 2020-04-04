@@ -27,9 +27,9 @@ jQuery(document).ready(function ($) {
 
     // Задаем высоту левого меню исходя из высоты контента
     function setHeightMenuLeft() {
-        var contentHeight = $('body > section').height()
+        var contentHeight = $(window).height();
         var menuLeft = $('#menu-left');
-        menuLeft.innerHeight(contentHeight);
+        menuLeft.css('height', contentHeight);
     }
 
     setHeightMenuLeft();

@@ -11,6 +11,8 @@
 }
 
 #menu-left {
+    position: sticky;
+    top: 0;
     display: none;
     max-width: 300px;
     color: #616161;
@@ -35,13 +37,13 @@
     padding-left: 0.5em;
 }
 
-#menu-left ul ul ul {
+#menu-left ul li li:not(:first-child) {
     display: none;
     padding-left: 0.5em;
 }
 
-#menu-left ul li:last-child {
-    padding-left: 2em;
+#menu-left ul ul ul ul li:last-child {
+    padding-left: 1.7em;
 }
 
 #menu-left a {
@@ -79,6 +81,7 @@
         position: absolute !important;
         right: 0;
         padding: 0 !important;
+        height: 100% !important;
         width: 100%;
         max-width: none!important;
         z-index: 9999;

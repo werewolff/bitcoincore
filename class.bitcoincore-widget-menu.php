@@ -41,16 +41,16 @@ class Bitcoincore_Menu_Widget extends WP_Widget
                     WHERE version_id = {$version->id} AND category_id = {$category->id}");
                     foreach ($methods as $method) {
                         $method_page_link = get_page_link($method->page_id);
-                        $methods_list[] = '<ul><li><a href="' . $method_page_link . '">' . $method->name . '</a></li></ul>';
+                        $methods_list[] = '<li><ul><li><a href="' . $method_page_link . '">' . $method->name . '</a></li></ul></li>';
                     }
                     $methods_list = implode('', $methods_list);
                     if (!empty($methods_list))
-                        $categories_list[] = '<ul><li>' . $btn_expand . $category->name . '</li>' . $methods_list . '</ul>';
+                        $categories_list[] = '<li><ul><li>' . $btn_expand . $category->name . '</li>' . $methods_list . '</ul></li>';
                 }
                 $categories_list = implode('', $categories_list);
                 if (!empty($categories_list)) {
                     $version_page_link = get_page_link($version->page_id);
-                    $versions_list[] = '<ul><li>' . $btn_expand . '<a href="' . $version_page_link . '">' . $version->name . '</a></li>' . $categories_list . '</ul>';
+                    $versions_list[] = '<li><ul><li>' . $btn_expand . '<a href="' . $version_page_link . '">' . $version->name . '</a></li>' . $categories_list . '</ul></li>';
                 }
             }
             $versions_list = implode('', $versions_list);

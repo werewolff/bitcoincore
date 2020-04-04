@@ -116,7 +116,7 @@ class Bitcoincore
             if (!in_array($category->id, $methods_column_category_id))
                 continue;
             $content .= '<h3>' . $category->name . '</h3>';
-            $content .= '<dl>';
+            $content .= '<dl style="display: none">';
             foreach ($methods AS $method) {
                 if ($category->id == $method->category_id) {
                     $version_desc = apply_filters('the_content', get_post_field('post_content', $method->page_id, 'display'));
@@ -124,8 +124,9 @@ class Bitcoincore
                     $content .= '<dd class="text-break">' . $version_desc . '</dd>';
                 }
             }
+            $content .= '</dl>';
         }
-        $content .= '</dl></div>';
+        $content .= '</div>';
         return $content;
     }
 

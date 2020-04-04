@@ -16,7 +16,7 @@ registerBlockType('bitcoincore/block-bitcoincore', {
         },
         startText: {
             type: 'string',
-            default: 'RPC API Blockchains Documentation' +
+            default: 'RPC API Blockchains Documentation ' +
             'help you, at least we hope so. ' +
             'To start, select the blockchain in the menu on the left',
         },
@@ -46,7 +46,7 @@ registerBlockType('bitcoincore/block-bitcoincore', {
                         value={startText}
                     />
                     <RichText
-                        tagName="ul"
+                        tagName="ol"
                         multiline="li"
                         onChange={(steps) => setAttributes({steps})}
                         placeholder="Enter list here"
@@ -80,7 +80,7 @@ registerBlockType('bitcoincore/block-bitcoincore', {
                     }
                     {
                         (steps !== '<li></li>')
-                            ? <RichText.Content tagName="ul" value={steps}/>
+                            ? <RichText.Content tagName="ol" value={steps}/>
                             : ''
                     }
                     {
