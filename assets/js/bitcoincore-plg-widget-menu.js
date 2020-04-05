@@ -27,15 +27,24 @@ jQuery(document).ready(function ($) {
 
     // Задаем высоту левого меню исходя из высоты контента
     function setHeightMenuLeft() {
-        var contentHeight = $(window).height();
-        var menuLeft = $('#menu-left');
-        menuLeft.css('height', contentHeight);
+        var menuLeft = $('#menu-left'),
+            header = $('header'),
+            windowHeight = $(window).height();
+        if ($(window).scrollTop() > header.height()) {
+            menuLeft.css({'height': windowHeight, 'max-height': ''});
+        }
+        else {
+            menuLeft.css({'height': '', 'max-height': windowHeight});
+        }
     }
 
     setHeightMenuLeft();
 
-    // При изменении окна считать высоту левого меню
+    // При измении размера окна считать высоту левого меню
     $(window).resize(function () {
-        setHeightMenuLeft();
+        setHeightMenuLeft()
+    });
+    $(window).scroll(function () {
+        setHeightMenuLeft()
     });
 });

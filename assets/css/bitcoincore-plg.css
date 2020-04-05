@@ -33,10 +33,6 @@
     vertical-align: middle;
 }
 
-.versions dl {
-    white-space: pre-wrap;
-}
-
 .versions dt {
     padding: 0.5em 0;
     margin-left: 3em;
