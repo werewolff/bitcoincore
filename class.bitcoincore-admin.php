@@ -27,6 +27,8 @@ class Bitcoincore_Admin extends Bitcoincore
         add_action('admin_enqueue_scripts', array('Bitcoincore_Admin', 'register_assets'));
         //filters
         add_filter('btc_description', array('Bitcoincore_Admin', 'filter_description'));
+        //ajax-actions
+        add_action('wp_ajax_set_image_blockchain', array('Bitcoincore_Admin', 'set_image_blockchain'));
     }
 
     /**
@@ -67,6 +69,10 @@ class Bitcoincore_Admin extends Bitcoincore
                 array('bs'),
                 filemtime(plugin_dir_path(__FILE__) . 'assets/css/bitcoincore-plg-admin.css')
             );
+            // Только для страницы списка блокчейнов,
+            // потому что подключается дефолтный jquery sortable и ломает сортировку
+            if (get_admin_page_title() === "Blockchains")
+                wp_enqueue_media(); // Скрипты для работы Media API
             wp_enqueue_style('bitcoincore-admin-css');
             wp_enqueue_script('bitcoincore-admin-js');
         }
@@ -557,10 +563,10 @@ class Bitcoincore_Admin extends Bitcoincore
         global $wpdb;
         $tbl_v = $wpdb->prefix . BTCPLG_TBL_VERSIONS;
         $sql = "UPDATE {$tbl_v} SET `order` = CASE ";
-        foreach ($change_order as $prev_order => $next_order){
+        foreach ($change_order as $prev_order => $next_order) {
             $sql .= "WHEN `order` = {$prev_order} THEN {$next_order} ";
         }
-        $sql .= " END WHERE `order` IN (". implode(',', $change_order).")";
+        $sql .= " END WHERE `order` IN (" . implode(',', $change_order) . ")";
         $sql = esc_sql($sql);
         $wpdb->query($sql);
     }
@@ -658,8 +664,6 @@ class Bitcoincore_Admin extends Bitcoincore
         $tbl_b = $prefix . BTCPLG_TBL_BLOCKCHAINS;
         $blockchains = (array)parent::get_data(BTCPLG_TBL_BLOCKCHAINS);
         $blockchains_column_name = array_column($blockchains, 'name');
-        $categories_in_db = (array)parent::get_data(BTCPLG_TBL_CATEGORIES);
-        $categories_column_name = array_column($categories_in_db, 'name');
         $categories_import = array();
         $log = array(
             'delete_b' => 0,
@@ -691,6 +695,8 @@ class Bitcoincore_Admin extends Bitcoincore
                     $log['add_v']++;
                 }
                 $current_version = $wpdb->get_results("SELECT * FROM {$tbl_v} WHERE name = '{$version_name}' AND blockchain_id = {$blockchain_id}")[0];
+                $categories_in_db = (array)parent::get_data(BTCPLG_TBL_CATEGORIES);
+                $categories_column_name = array_column($categories_in_db, 'name');
                 // Категории
                 foreach ($categories as $category_name => $methods) {
                     if (!in_array(strtolower($category_name), array_map('mb_strtolower', $categories_column_name))) { // Если категории нет в базе, то создаем ее
@@ -774,8 +780,9 @@ class Bitcoincore_Admin extends Bitcoincore
             $blockchains_column_name = array_map('mb_strtolower', $blockchains_column_name);
             $blockchains_diff = array_diff($blockchains_column_name, $blockchains_import);
             foreach ($blockchains_diff as $blockchain_diff) {
-                $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . "WHERE name = '{$blockchain_diff}'");
+                $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE name = '{$blockchain_diff}'");
                 self::delete_blockchain($id);
+                echo $id . '   ';
                 $log['delete_b']++;
             }
         }
@@ -842,6 +849,29 @@ class Bitcoincore_Admin extends Bitcoincore
         }
         parent::view('header');
         parent::view('import');
+    }
+
+    /**
+     * AJAX set image for blockchain
+     */
+    public static function set_image_blockchain()
+    {
+        global $wpdb;
+        $prefix = $wpdb->prefix;
+        $blockchain_id = intval($_POST['blockchain_id']);
+        $image_id = intval($_POST['image_id']);
+        $result = $wpdb->update(
+            $prefix . BTCPLG_TBL_BLOCKCHAINS,
+            array('img_id' => $image_id),
+            array('id' => $blockchain_id),
+            array('%d'),
+            array('%d')
+        );
+        if ($result === false)
+            echo 0;
+        else
+            echo $image_id;
+        die();
     }
 
     /**

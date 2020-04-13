@@ -51,7 +51,7 @@ tr:hover .row-actions {
     vertical-align: -.125em;
 }
 
-.table-versions td a{
+.table-versions td a {
     display: block;
     width: 100%;
 }
@@ -78,7 +78,7 @@ tr:hover .row-actions {
 
 .control-bar-version,
 .control-bar-category,
-.control-bar-blockchain{
+.control-bar-blockchain {
     position: relative;
     left: -9999em;
     margin-left: 1em;
@@ -96,13 +96,13 @@ tr:hover .row-actions {
 tr:hover .control-bar-method,
 th:hover .control-bar-version,
 th:hover .control-bar-category,
-tr:hover .control-bar-blockchain{
+tr:hover .control-bar-blockchain {
     position: static;
 }
 
 .input-edit-version,
 .input-edit-category,
-.input-edit-blockchain{
+.input-edit-blockchain {
     display: inline-block;
     height: 23px;
     width: auto;
@@ -124,6 +124,23 @@ tr:hover .control-bar-blockchain{
     color: red;
 }
 
+.blockchain-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.blockchain-icon:hover {
+    box-shadow: 0px 0px 6px 0px #565656;
+}
+
+.blockchain-icon:active {
+    width: 19px;
+    height: 19px;
+    border: 1px solid grey;
+    box-shadow: 0px 0px 6px 0px #565656;
+}
+
 /* ------ADD AND EDIT------- */
 
 .control-bar-add {
@@ -132,13 +149,13 @@ tr:hover .control-bar-blockchain{
     width: 100%;
 }
 
-.control-bar-add #add-method{
+.control-bar-add #add-method {
     text-align: left;
 }
 
 #add-version label,
 #add-category label,
-#add-blockchain label{
+#add-blockchain label {
     margin-bottom: 0;
 }
 
@@ -188,13 +205,13 @@ tr:hover .control-bar-blockchain{
 }
 
 .form-edit_col-2 label,
-.form-add_col-1 label{
+.form-add_col-1 label {
     text-align: end;
     padding: 10px 0;
 }
 
 .form-edit_col-2 textarea,
-.form-add_col-1 textarea{
+.form-add_col-1 textarea {
     width: 100%;
     max-width: 100%;
     vertical-align: middle;
@@ -202,7 +219,7 @@ tr:hover .control-bar-blockchain{
 }
 
 .submit-edit,
-.submit-add{
+.submit-add {
     margin-bottom: 30px;
     text-align: center;
 }
@@ -283,7 +300,7 @@ body.dragging, body.dragging * {
     z-index: 2000;
 }
 
-.sortable-placeholder{
+.sortable-placeholder {
 
 }
 

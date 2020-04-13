@@ -56,7 +56,12 @@ class Bitcoincore_Menu_Widget extends WP_Widget
             $versions_list = implode('', $versions_list);
             if (!empty($versions_list)) {
                 $blockchain_page_link = get_page_link($blockchain->page_id);
-                $blockchains_list[] = '<ul><li>' . $btn_expanded . '<a href="' . $blockchain_page_link . '">' . $blockchain->name . '</a></li>' . $versions_list . '</ul>';
+                $image_url = wp_get_attachment_image_url($blockchain->img_id);
+                $image = '';
+                if ($image_url)
+                    $image = '<img class="blockchain-icon" src="' . $image_url . '" />';
+                $link = '<a href="' . $blockchain_page_link . '">' . $image . $blockchain->name . '</a>';
+                $blockchains_list[] = '<ul><li>' . $btn_expanded . $link . '</li>' . $versions_list . '</ul>';
             }
         }
 

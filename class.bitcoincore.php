@@ -221,6 +221,7 @@ ORDER BY {$tbl_c}.name, {$tbl_m}.name ASC";
             $sql = "CREATE TABLE $table_name_blockchains (
 	  id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 	  name varchar(200) NOT NULL,
+	  img_id bigint(20) UNSIGNED,
 	  page_id bigint(20) UNSIGNED NOT NULL,
 	  PRIMARY KEY (id),
 	  FOREIGN KEY (page_id) REFERENCES $table_name_posts (ID) ON DELETE CASCADE ON UPDATE CASCADE

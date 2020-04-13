@@ -29,8 +29,8 @@
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-sticky sorted_head table-versions">
         <thead class="thead-light ">
-        <tr class="sortable-versions">
-            <th class="text-center not-sortable">
+        <tr>
+            <th class="align-middle text-center not-sortable">
                 <span>Method name</span>
             </th>
             <? foreach ($versions as $version) {
@@ -130,7 +130,7 @@
                         </td>
                     <? } ?>
                 </tr>
-                <tr class="edit-bar no-hover" id="edit-bar-<? echo $method->id; ?>">
+                <tr class="edit-bar no-hover" id="edit-bar-<? echo $method->id; ?>" style="display: none">
                     <td colspan="1000">
                         <? include(BTCPLUGIN__DIR . 'views/edit-method.php'); ?>
                     </td>

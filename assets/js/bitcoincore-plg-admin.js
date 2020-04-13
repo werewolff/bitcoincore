@@ -1,4 +1,55 @@
 jQuery(document).ready(function ($) {
+
+    function updateImageBlockchain(urlImage, source) {
+        if (source.is('img')) {
+            source.attr('src', urlImage);
+        } else {
+            var img = '<img class="blockchain-icon show-chose-image" src="' + urlImage + '" title="Изменить иконку"/>';
+            source.replaceWith(img);
+        }
+    }
+
+    function setImageBlockchain(idBlockchain, idImage, urlImage, source) {
+        var request = $.ajax({
+            url: ajaxurl,
+            type: "POST",
+            data: {
+                action: 'set_image_blockchain',
+                blockchain_id: idBlockchain,
+                image_id: idImage
+            },
+            dataType: "html"
+        });
+
+        request.done(function (response) {
+            if (response) {
+                updateImageBlockchain(urlImage, source)
+            }
+            else {
+                alert("Ошибка при изменении иконки блокчейна");
+            }
+        });
+
+        request.fail(function () {
+            alert("Ошибка при изменении иконки блокчейна");
+        });
+    }
+
+    if ($('.show-chose-image').length > 0) {
+        if (typeof wp !== 'undefined' && wp.media && wp.media.editor) {
+            $('.show-chose-image').on('click', function (e) {
+                e.preventDefault();
+                var button = $(this);
+
+                wp.media.editor.send.attachment = function (props, attachment) {
+                    setImageBlockchain(button.attr('data-id'), attachment.id, attachment.url, button)
+                };
+                wp.media.editor.open();
+                return false;
+            });
+        }
+    }
+
     if ($('table').is('.table-sticky')) {
         var headMainTable = $('.table-sticky thead');
         var offsetMainTable = headMainTable.offset();
@@ -7,6 +58,14 @@ jQuery(document).ready(function ($) {
         categoryMainTable.each(function (i) {
             offsetCategories[i] = $(this).offset();
         });
+
+        function updateOffset() {
+            offsetMainTable = headMainTable.offset();
+            offsetCategories = [];
+            categoryMainTable.each(function (i) {
+                offsetCategories[i] = $(this).offset();
+            });
+        }
 
         if (!headMainTable[0]) {
             headMainTable[0] = {
@@ -18,7 +77,7 @@ jQuery(document).ready(function ($) {
             var length = categories.length;
             categories.each(function (i) {
                 var scrollTop = $(window).scrollTop();
-                var translateY = scrollTop + head[0].offsetHeight - offset[i].top - 3;
+                var translateY = scrollTop + head[0].offsetHeight - offset[i].top - 3 + $('#wpadminbar').height();
                 if (i === (length - 1)) {
                     if (scrollTop >= offset[i].top) {
                         $(this).css({
@@ -50,7 +109,7 @@ jQuery(document).ready(function ($) {
 
         function stickyTop(element, offset) {
             var scrollTop = $(window).scrollTop();
-            var translateY = scrollTop - offset.top - 1;
+            var translateY = scrollTop - offset.top - 1 + $('#wpadminbar').height();
             if (scrollTop >= offset.top) {
                 element.css('transform', 'translateY(' + translateY + 'px)');
             }
@@ -162,7 +221,6 @@ jQuery(document).ready(function ($) {
     });
 
     function editBarToggle() {
-        $('.edit-bar').hide();
         $('[id^=edit-method-]').bind('click', function () {
             var id = $(this).attr('id');
             var idMethod = id.match(/\d+/)[0];

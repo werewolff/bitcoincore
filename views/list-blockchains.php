@@ -19,22 +19,26 @@
         <th>
             Название блокчейна
         </th>
+        <th>
+            Иконка
+        </th>
     </tr>
     </thead>
     <tbody>
     <? foreach ($blockchains as $blockchain) { ?>
         <tr>
             <td>
-                <a href="<? echo get_page_link($blockchain->page_id)?>"><? echo $blockchain->name?></a>
+                <a href="<? echo get_page_link($blockchain->page_id) ?>"><? echo $blockchain->name ?></a>
                 <div class="control-bar control-bar-blockchain">
-                    <span class="dashicons dashicons-edit" id="edit-blockchain-<? echo $blockchain->id?>"></span>
-                    <span class="dashicons dashicons-no-alt" id="delete-blockchain-<? echo $blockchain->id?>"></span>
+                    <span class="dashicons dashicons-edit" id="edit-blockchain-<? echo $blockchain->id ?>"></span>
+                    <span class="dashicons dashicons-no-alt" id="delete-blockchain-<? echo $blockchain->id ?>"></span>
                 </div>
                 <div class="control-bar" style="display: none">
                     <form method="post">
                         <input hidden name="id" value="<? echo $blockchain->id; ?>"/>
                         <input hidden name="prev_name" value="<? echo $blockchain->name; ?>"/>
-                        <input class="form-control input-edit-blockchain" name="name" value="<? echo $blockchain->name; ?>"/>
+                        <input class="form-control input-edit-blockchain" name="name"
+                               value="<? echo $blockchain->name; ?>"/>
                         <button class="btn-edit btn-edit-success" name="action" value="edit_blockchain">
                             <span class="dashicons dashicons-yes"></span>
                         </button>
@@ -43,6 +47,25 @@
                         </button>
                     </form>
                 </div>
+            </td>
+            <td>
+                <?
+                $img_url = wp_get_attachment_image_url($blockchain->img_id);
+                if ($img_url) {
+                    ?>
+                    <img
+                            class="blockchain-icon show-chose-image"
+                            src="<? echo $img_url ?>"
+                            title="Изменить иконку"
+                            data-id="<? echo $blockchain->id; ?>"
+                    />
+                    <?
+                } else {
+                    ?>
+                    <button class="show-chose-image button" data-id="<? echo $blockchain->id; ?>">Выбрать...</button>
+                    <?
+                }
+                ?>
             </td>
         </tr>
     <? } ?>

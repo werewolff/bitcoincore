@@ -28,6 +28,7 @@
 }
 
 #menu-left > div {
+    margin-left: -1em;
     padding-top: 0.5em;
 
 }
@@ -77,14 +78,26 @@
     transform: rotate(90deg) translateY(5px);
 }
 
+#menu-left .blockchain-icon {
+    width: 1em;
+    height: 1em;
+    margin-right: .5em;
+    margin-bottom: 0.25em;
+    vertical-align: middle;
+}
+
 @media (max-width: 768px) {
+    #menu-left > div {
+        margin-left: 0;
+    }
+
     .left-menu-full-screen {
         position: absolute !important;
         right: 0;
         padding: 0 !important;
         height: 100% !important;
         width: 100%;
-        max-width: none!important;
+        max-width: none !important;
         z-index: 9999;
     }
 }
