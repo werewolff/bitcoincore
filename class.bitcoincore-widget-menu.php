@@ -45,7 +45,7 @@ class Bitcoincore_Menu_Widget extends WP_Widget
                     }
                     $methods_list = implode('', $methods_list);
                     if (!empty($methods_list))
-                        $categories_list[] = '<li><ul><li>' . $btn_expand . $category->name . '</li>' . $methods_list . '</ul></li>';
+                        $categories_list[] = '<li><ul><li>' . $btn_expand . '<p>' . $category->name . '</p></li>' . $methods_list . '</ul></li>';
                 }
                 $categories_list = implode('', $categories_list);
                 if (!empty($categories_list)) {

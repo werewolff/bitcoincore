@@ -47,8 +47,21 @@
     padding-left: 1.7em;
 }
 
+#menu-left p {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 #menu-left a {
     color: #616161;
+}
+
+#menu-left a:only-child {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #menu-left a:hover {
@@ -61,9 +74,9 @@
 }
 
 #menu-left .btn-expand {
+    float: left;
+    margin-top: .1em;
     font-size: 1.5em;
-    vertical-align: middle;
-    line-height: 1rem;
     padding-right: 1.3em;
 }
 
@@ -73,9 +86,9 @@
 }
 
 #menu-left .btn-expanded {
-    -webkit-transform: rotate(90deg) translateY(5px);
-    -ms-transform: rotate(90deg) translateY(5px);
-    transform: rotate(90deg) translateY(5px);
+    -webkit-transform: rotate(90deg) translateX(5px);
+    -ms-transform: rotate(90deg) translateX(5px);
+    transform: rotate(90deg) translateX(5px);
 }
 
 #menu-left .blockchain-icon {
