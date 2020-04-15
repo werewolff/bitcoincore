@@ -20,7 +20,6 @@
 }
 
 .versions > h3 {
-    font-family: dashicons;
     cursor: pointer;
 }
 
@@ -30,6 +29,7 @@
 
 .versions > h3:after {
     content: "\f139";
+    font-family: dashicons;
     vertical-align: middle;
 }
 
