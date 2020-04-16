@@ -680,7 +680,7 @@ class Bitcoincore_Admin extends Bitcoincore
         );
         // Блокчейны
         foreach ($data as $blockchain_name => $versions) {
-            if (!in_array(strtolower($blockchain_name), array_map('mb_strtolower', $blockchains_column_name))) { // Если блокчейна нет в базе, то создаем его
+            if (!in_array(strtolower($blockchain_name), array_map('strtolower', $blockchains_column_name))) { // Если блокчейна нет в базе, то создаем его
                 self::create_blockchain($blockchain_name);
                 $log['add_b']++;
             }
@@ -690,7 +690,7 @@ class Bitcoincore_Admin extends Bitcoincore
             // Версии
             foreach ($versions as $version_name => $categories) {
                 $methods_import = array();
-                if (!in_array(strtolower($version_name), array_map('mb_strtolower', $versions_column_name))) { // Если версии нет в базе, то создаем ее
+                if (!in_array(strtolower($version_name), array_map('strtolower', $versions_column_name))) { // Если версии нет в базе, то создаем ее
                     self::create_version($version_name, $blockchain_id);
                     $log['add_v']++;
                 }
@@ -699,7 +699,7 @@ class Bitcoincore_Admin extends Bitcoincore
                 $categories_column_name = array_column($categories_in_db, 'name');
                 // Категории
                 foreach ($categories as $category_name => $methods) {
-                    if (!in_array(strtolower($category_name), array_map('mb_strtolower', $categories_column_name))) { // Если категории нет в базе, то создаем ее
+                    if (!in_array(strtolower($category_name), array_map('strtolower', $categories_column_name))) { // Если категории нет в базе, то создаем ее
                         $wpdb->insert($tbl_c, array('name' => $category_name));
                         $log['add_c']++;
                     }
@@ -714,7 +714,7 @@ class Bitcoincore_Admin extends Bitcoincore
                     // Методы
                     foreach ($methods as $method_name => $description) {
                         $methods_import[] = $method_name; // Собираем список импортируемых методов в текущей версии
-                        if (!in_array(strtolower($method_name), array_map('mb_strtolower', $methods_column_name))) { // Если метода нет в базе, то создаем его
+                        if (!in_array(strtolower($method_name), array_map('strtolower', $methods_column_name))) { // Если метода нет в базе, то создаем его
                             $method_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$tbl_m} WHERE name = %s", $method_name));
                             if (!isset($method_id)) {
                                 $wpdb->insert($prefix . BTCPLG_TBL_METHODS, array('name' => $method_name)); //Создаем сам метод
@@ -751,8 +751,8 @@ class Bitcoincore_Admin extends Bitcoincore
                     LEFT JOIN {$tbl_m} ON {$tbl_mv}.method_id = {$tbl_m}.id 
                     WHERE version_id = {$current_version->id}";
                     $methods_in_db = (array)$wpdb->get_results($sql);
-                    $methods_import = array_map('mb_strtolower', $methods_import);
-                    $methods_column_name = array_map('mb_strtolower', array_column($methods_in_db, 'name'));
+                    $methods_import = array_map('strtolower', $methods_import);
+                    $methods_column_name = array_map('strtolower', array_column($methods_in_db, 'name'));
                     $methods_diff = array_diff($methods_column_name, $methods_import);
                     foreach ($methods_diff as $method_diff) {
                         $method_id = $wpdb->get_var("SELECT id FROM {$tbl_m} WHERE name = '{$method_diff}'");
@@ -763,8 +763,8 @@ class Bitcoincore_Admin extends Bitcoincore
             }
             // Версии
             if ($mode_full_sync) {
-                $versions_import = array_map('mb_strtolower', array_keys($versions));
-                $versions_column_name = array_map('mb_strtolower', $versions_column_name);
+                $versions_import = array_map('strtolower', array_keys($versions));
+                $versions_column_name = array_map('strtolower', $versions_column_name);
                 $versions_diff = array_diff($versions_column_name, $versions_import);
                 foreach ($versions_diff as $version_diff) {
                     $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_VERSIONS . " WHERE name = '{$version_diff}' AND blockchain_id = {$blockchain_id}");
@@ -776,8 +776,8 @@ class Bitcoincore_Admin extends Bitcoincore
         }
         // Блокчейны
         if ($mode_full_sync) {
-            $blockchains_import = array_map('mb_strtolower', array_keys($data));
-            $blockchains_column_name = array_map('mb_strtolower', $blockchains_column_name);
+            $blockchains_import = array_map('strtolower', array_keys($data));
+            $blockchains_column_name = array_map('strtolower', $blockchains_column_name);
             $blockchains_diff = array_diff($blockchains_column_name, $blockchains_import);
             foreach ($blockchains_diff as $blockchain_diff) {
                 $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_BLOCKCHAINS . " WHERE name = '{$blockchain_diff}'");
@@ -789,8 +789,8 @@ class Bitcoincore_Admin extends Bitcoincore
 
         // Категории
         if ($mode_full_sync) {
-            $categories_import = array_map('mb_strtolower', $categories_import);
-            $categories_column_name = array_map('mb_strtolower', $categories_column_name);
+            $categories_import = array_map('strtolower', $categories_import);
+            $categories_column_name = array_map('strtolower', $categories_column_name);
             $categories_diff = array_diff($categories_column_name, $categories_import);
             foreach ($categories_diff as $category_diff) {
                 $id = $wpdb->get_var("SELECT id FROM " . $prefix . BTCPLG_TBL_CATEGORIES . " WHERE name = '{$category_diff}'");
