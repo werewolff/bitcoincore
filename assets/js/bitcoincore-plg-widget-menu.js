@@ -31,7 +31,7 @@ jQuery(document).ready(function ($) {
 
     // Удалить наложеный элемент
     function removeTextOver() {
-        if ($('body').is('.menu-left-text-over'))
+        if ($('.menu-left-text-over').length)
             $('body').find('.menu-left-text-over').remove();
     }
 
@@ -40,7 +40,7 @@ jQuery(document).ready(function ($) {
 
     // Обновление положения элемента при скролле
     function updatePositionTextOver() {
-        if ($('body').is('.menu-left-text-over')) {
+        if ($('.menu-left-text-over').length) {
             var offset = menuLeft.find('.text-over-target').offset();
             $('body .menu-left-text-over').css('top', offset.top + 2);
         }
