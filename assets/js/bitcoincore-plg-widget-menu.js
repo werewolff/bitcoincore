@@ -50,7 +50,7 @@ jQuery(document).ready(function ($) {
     menuLeft.scroll(updatePositionTextOver); // Обновляем положение при скролле самого меню
 
     // Раскрытие меню до текущей страницы
-    var currentLinkInMenu = menuLeft.find('ul').find('a[href="' + window.location.href + '"]');
+    var currentLinkInMenu = menuLeft.find('ul').find('a[href="' + window.location.href.split('?')[0] + '"]');
     currentLinkInMenu.parent().addClass('active-link');
     currentLinkInMenu.parents('ul').each(function (index) {
 
