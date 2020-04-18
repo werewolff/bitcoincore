@@ -1,4 +1,6 @@
 jQuery(document).ready(function ($) {
+    var menuLeft = $('#menu-left');
+
     // Для названий которые не влезают
     function showTextOver() {
         if ($(this)[0].scrollWidth > $(this).innerWidth()) {
@@ -15,7 +17,7 @@ jQuery(document).ready(function ($) {
                     'pointer-events': 'none',
                     'z-index': '101'
                 };
-            if($(this).is('a')){
+            if ($(this).is('a')) {
                 style.color = $(this).css('color');
             }
             $(this)
@@ -26,26 +28,30 @@ jQuery(document).ready(function ($) {
             $(this).addClass('text-over-target') // Для отслеживания
         }
     }
+
     // Удалить наложеный элемент
     function removeTextOver() {
-        $('body').find('.menu-left-text-over').remove();
+        if ($('body').is('.menu-left-text-over'))
+            $('body').find('.menu-left-text-over').remove();
     }
 
-    $('#menu-left a:only-child').hover(showTextOver, removeTextOver); // Для методов
-    $('#menu-left p').hover(showTextOver, removeTextOver); // Для категорий
+    menuLeft.find('a:only-child').hover(showTextOver, removeTextOver); // Для методов
+    menuLeft.find('p').hover(showTextOver, removeTextOver); // Для категорий
 
     // Обновление положения элемента при скролле
     function updatePositionTextOver() {
-        var offset = $('#menu-left .text-over-target').offset();
-        $('body .menu-left-text-over').css('top', offset.top + 2);
+        if ($('body').is('.menu-left-text-over')) {
+            var offset = menuLeft.find('.text-over-target').offset();
+            $('body .menu-left-text-over').css('top', offset.top + 2);
+        }
     }
 
     $(window).scroll(updatePositionTextOver); // Обновляем положение при скролле страницы
-    $('#menu-left').scroll(updatePositionTextOver); // Обновляем положение при скролле самого меню
+    menuLeft.scroll(updatePositionTextOver); // Обновляем положение при скролле самого меню
 
     // Раскрытие меню до текущей страницы
-    var currentLinkInMenu = $('#menu-left ul').find('a[href="' + window.location.href + '"]');
-    currentLinkInMenu.addClass('active-link');
+    var currentLinkInMenu = menuLeft.find('ul').find('a[href="' + window.location.href + '"]');
+    currentLinkInMenu.parent().addClass('active-link');
     currentLinkInMenu.parents('ul').each(function (index) {
 
         if (index === 0) {
@@ -59,36 +65,62 @@ jQuery(document).ready(function ($) {
 
     // Кнопка показа меню на маленьких экранах
     $('#btn-toggle-left-menu').bind('click', function () {
-        $('#menu-left').toggleClass('left-menu-full-screen');
-        $('#menu-left').toggle();
+        var content = menuLeft.next();
+
+        menuLeft.toggleClass('left-menu-full-screen');
+        menuLeft.toggle();
+        content.toggle();
     });
 
     // Раскрытие списка
-    $('#menu-left .btn-expand').bind('click', function () {
+    menuLeft.find('.btn-expand').bind('click', function () {
         $(this).toggleClass('btn-expanded');
         $(this).parent().nextAll().toggle(200);
     });
 
     // Задаем высоту левого меню исходя из высоты контента
     function setHeightMenuLeft() {
-        var menuLeft = $('#menu-left'),
+        var content = menuLeft.next(),
+            adminBarHeight = 0,
             header = $('header'),
-            windowHeight = $(window).height();
-        if ($(window).scrollTop() > header.height()) {
-            menuLeft.css({'height': windowHeight, 'max-height': ''});
+            footer = $('footer'),
+            windowHeight = $(window).height(),
+            windowWidth = $(window).width(),
+            windowScrollTop = $(window).scrollTop();
+
+        if ($('div').is('#wpadminbar')) {
+            adminBarHeight = $('#wpadminbar').height();
+        }
+
+        if (windowWidth > 768) {
+            if (windowScrollTop > header.height() + adminBarHeight && content.height() >= windowHeight) {
+                menuLeft.css({'height': windowHeight, 'max-height': ''});
+            }
+            else if (content.height() >= windowHeight) {
+                menuLeft.css({
+                    'height': '',
+                    'max-height': windowHeight - header.height() - adminBarHeight + windowScrollTop
+                });
+            }
+            else {
+                menuLeft.css({'height': '', 'max-height': content.height()});
+            }
         }
         else {
-            menuLeft.css({'height': '', 'max-height': windowHeight});
+            menuLeft.css({'height': '100%', 'max-height': ''});
         }
     }
 
     setHeightMenuLeft();
 
-    // При измении размера окна считать высоту левого меню
+    // При измении размера окна, при скролле, и изменении контента считать высоту левого меню
     $(window).resize(function () {
         setHeightMenuLeft()
     });
     $(window).scroll(function () {
         setHeightMenuLeft()
     });
+    window.addEventListener('resizeContent',function () {
+        setHeightMenuLeft()
+    })
 });

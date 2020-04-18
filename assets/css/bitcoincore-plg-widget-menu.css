@@ -35,16 +35,25 @@
 
 #menu-left ul {
     list-style: none;
+    padding-left: 0;
+}
+
+#menu-left ul > li {
     padding-left: 0.5em;
 }
 
 #menu-left ul li li:not(:first-child) {
     display: none;
-    padding-left: 0.5em;
 }
 
-#menu-left ul ul ul ul li:last-child {
-    padding-left: 1.7em;
+#menu-left > div > ul > li > ul > li:first-child{
+    margin-left: -0.5em;
+    padding-left: 1em;
+}
+
+#menu-left ul ul ul ul li:only-child{
+    margin-left: -1.5em;
+    padding-left: 4em;
 }
 
 #menu-left p {
@@ -69,8 +78,12 @@
     text-decoration: none;
 }
 
-#menu-left a.active-link {
-    color: #d87400;
+#menu-left li.active-link {
+    background-color: #f8a238;
+}
+
+#menu-left li.active-link a {
+    color: #ffffff;
 }
 
 #menu-left .btn-expand {

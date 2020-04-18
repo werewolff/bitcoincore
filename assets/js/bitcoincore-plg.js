@@ -1,10 +1,13 @@
 jQuery(document).ready(function ($) {
-
+    var resizeContent = new Event('resizeContent'); // Событие для отслеживания размера контента и обновлении левого меню
+    // Раскрытие категорий
     $('.versions h3').click(function () {
-       $(this).toggleClass('show');
-       $(this).next('dl').toggle();
+        $(this).toggleClass('show');
+        $(this).next('dl').toggle();
+        dispatchEvent(resizeContent);
     });
 
+    // Прилипание заголовка таблицы
     if ($('table').is('.table-sticky')) {
         var headMainTable = $('.table-sticky thead');
         var offsetMainTable = headMainTable.offset();
