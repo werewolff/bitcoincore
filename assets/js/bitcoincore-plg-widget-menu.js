@@ -4,14 +4,18 @@ jQuery(document).ready(function ($) {
     // Для названий которые не влезают
     function showTextOver() {
         if ($(this)[0].scrollWidth > $(this).innerWidth()) {
-            var color = $(this).parents('#menu-left').css('color'),
+            var color = menuLeft.css('color'),
+                lineHeight = menuLeft.css('line-height'),
+                fontWeight = menuLeft.css('font-weight'),
                 backgroundColor = $(this).parents('#menu-left').css('background-color'),
                 offset = $(this).offset(),
                 style = {
                     position: 'absolute',
-                    top: offset.top + 2,
+                    top: offset.top,
                     left: offset.left,
-                    'font-weight': 500,
+                    height: $(this).height(),
+                    'line-height': lineHeight,
+                    'font-weight': fontWeight,
                     'background-color': backgroundColor,
                     color: color,
                     'pointer-events': 'none',
@@ -19,6 +23,8 @@ jQuery(document).ready(function ($) {
                 };
             if ($(this).is('a')) {
                 style.color = $(this).css('color');
+                if ($(this).parent().css('background-color') !== 'rgba(0, 0, 0, 0)')
+                    style.backgroundColor = $(this).parent().css('background-color');
             }
             $(this)
                 .clone()
@@ -42,7 +48,7 @@ jQuery(document).ready(function ($) {
     function updatePositionTextOver() {
         if ($('.menu-left-text-over').length) {
             var offset = menuLeft.find('.text-over-target').offset();
-            $('body .menu-left-text-over').css('top', offset.top + 2);
+            $('body .menu-left-text-over').css('top', offset.top);
         }
     }
 
@@ -120,7 +126,7 @@ jQuery(document).ready(function ($) {
     $(window).scroll(function () {
         setHeightMenuLeft()
     });
-    window.addEventListener('resizeContent',function () {
+    window.addEventListener('resizeContent', function () {
         setHeightMenuLeft()
     })
 });
